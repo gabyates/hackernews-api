@@ -4,13 +4,12 @@ import jwt from 'jsonwebtoken';
 
 /* Instruments */
 import { Resolver } from '../types';
-import { APP_SECRET, getUserId } from '../utils';
+import { APP_SECRET } from '../utils';
 
-const signup: Resolver<{
-    email: string;
-    password: string;
-    name: string;
-}> = async (_, args, ctx) => {
+const signup: Resolver<
+    unknown,
+    { email: string; password: string; name: string }
+> = async (_, args, ctx) => {
     if (!APP_SECRET) {
         throw new Error('APP_SECRET variable not found!');
     }
@@ -37,7 +36,7 @@ const signup: Resolver<{
     };
 };
 
-const login: Resolver<{ email: string; password: string }> = async (
+const login: Resolver<unknown, { email: string; password: string }> = async (
     _,
     args,
     ctx,
@@ -51,7 +50,7 @@ const login: Resolver<{ email: string; password: string }> = async (
     });
 
     if (!user) {
-        throw new Error('No such user found');
+        throw new Error('No such user found.');
     }
 
     const isValid = await bcrypt.compare(args.password, user.password);
@@ -68,46 +67,47 @@ const login: Resolver<{ email: string; password: string }> = async (
     };
 };
 
-const createLink: Resolver<{ url: string; description: string }> = async (
-    _,
-    args,
-    ctx,
-) => {
-    if (!ctx.userId) {
-        throw new Error('User is not authenticated.');
-    }
-
-    const newLink = await ctx.prisma.link.create({
-        data: {
-            url: args.url,
-            description: args.description,
-            postedBy: {
-                connect: {
-                    id: ctx.userId,
-                },
-            },
-        },
-    });
-
-    return newLink;
-};
-
-const updateLink: Resolver<{ id: string; url: string; description: string }> =
+const createLink: Resolver<unknown, { url: string; description: string }> =
     async (_, args, ctx) => {
-        const updatedLink = await ctx.prisma.link.update({
-            where: {
-                id: args.id,
-            },
+        if (!ctx.userId) {
+            throw new Error('User is not authenticated.');
+        }
+
+        const newLink = await ctx.prisma.link.create({
             data: {
                 url: args.url,
                 description: args.description,
+                postedBy: {
+                    connect: {
+                        id: ctx.userId,
+                    },
+                },
             },
         });
 
-        return updatedLink;
+        ctx.pubsub.publish('LINK_CREATED', { linkCreated: newLink });
+
+        return newLink;
     };
 
-const deleteLink: Resolver<{ id: string }> = async (_, args, ctx) => {
+const updateLink: Resolver<
+    unknown,
+    { id: number; url: string; description: string }
+> = async (_, args, ctx) => {
+    const updatedLink = await ctx.prisma.link.update({
+        where: {
+            id: args.id,
+        },
+        data: {
+            url: args.url,
+            description: args.description,
+        },
+    });
+
+    return updatedLink;
+};
+
+const deleteLink: Resolver<unknown, { id: number }> = async (_, args, ctx) => {
     try {
         await ctx.prisma.link.delete({
             where: {
@@ -123,10 +123,43 @@ const deleteLink: Resolver<{ id: string }> = async (_, args, ctx) => {
     return true;
 };
 
+const vote: Resolver = async (_, args, ctx) => {
+    const userId = ctx.userId;
+
+    if (!userId) {
+        return null;
+    }
+
+    const isAlreadyVoted = await ctx.prisma.vote.findUnique({
+        where: {
+            linkId_userId: {
+                linkId: Number(args.linkId),
+                userId: userId,
+            },
+        },
+    });
+
+    if (Boolean(isAlreadyVoted)) {
+        throw new Error(`Already voted for link: ${args.linkId}`);
+    }
+
+    const newVote = ctx.prisma.vote.create({
+        data: {
+            user: { connect: { id: userId } },
+            link: { connect: { id: Number(args.linkId) } },
+        },
+    });
+
+    ctx.pubsub.publish('NEW_VOTE', { newVote });
+
+    return newVote;
+};
+
 export const Mutation = {
     signup,
     login,
     createLink,
     updateLink,
     deleteLink,
+    vote,
 };

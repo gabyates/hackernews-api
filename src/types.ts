@@ -1,17 +1,19 @@
 /* Core */
 import { GraphQLFieldResolver } from 'graphql';
+import type { PubSub } from 'graphql-subscriptions';
 import type { PrismaClient } from '@prisma/client';
 import type { Request, Response } from 'express';
 
 export type Resolver<
-    TArgs = { [argName: string]: any },
     TSource = unknown,
+    TArgs = { [argName: string]: any },
 > = GraphQLFieldResolver<
     TSource,
     {
         req: Request;
-        userId: string | null;
+        userId: number | null;
         prisma: PrismaClient;
+        pubsub: PubSub;
     },
     TArgs
 >;
