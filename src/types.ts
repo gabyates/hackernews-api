@@ -26,3 +26,9 @@ export type ServerContext = {
     };
     res: Response;
 };
+
+// export type EV = 'LINK_CREATED' | 'POST_VOTED';
+export enum EV {
+    LINK_CREATED = 'LINK_CREATED',
+    POST_VOTED = 'POST_VOTED',
+}

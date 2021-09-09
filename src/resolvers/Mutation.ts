@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 /* Instruments */
-import { Resolver } from '../types';
+import { Resolver, EV } from '../types';
 import { APP_SECRET } from '../utils';
 
 const signup: Resolver<
@@ -85,7 +85,7 @@ const createLink: Resolver<unknown, { url: string; description: string }> =
             },
         });
 
-        ctx.pubsub.publish('LINK_CREATED', { linkCreated: newLink });
+        ctx.pubsub.publish(EV.LINK_CREATED, newLink);
 
         return newLink;
     };
@@ -150,7 +150,7 @@ const vote: Resolver = async (_, args, ctx) => {
         },
     });
 
-    ctx.pubsub.publish('NEW_VOTE', { newVote });
+    ctx.pubsub.publish(EV.POST_VOTED, newVote);
 
     return newVote;
 };

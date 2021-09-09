@@ -24,10 +24,11 @@ const typeDefs = loadSchemaSync(join(__dirname, './schema.graphql'), {
 }) as unknown as string;
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
+export const pubsub = new PubSub();
+
 (async () => {
     const app = express();
     const httpServer = createServer(app);
-    const pubsub = new PubSub();
 
     const apolloServer = new ApolloServer({
         schema,
@@ -55,16 +56,21 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
         ],
     });
 
-    console.log(apolloServer.graphqlPath);
-
-    const subscriptionServer = SubscriptionServer.create(
-        { schema, execute, subscribe },
-        { server: httpServer, path: apolloServer.graphqlPath },
-    );
-
     await apolloServer.start();
 
-    apolloServer.applyMiddleware({ app, path: '/' });
+    apolloServer.applyMiddleware({ app });
+
+    const subscriptionServer = SubscriptionServer.create(
+        {
+            schema,
+            execute,
+            subscribe,
+            onConnect() {
+                return { pubsub };
+            },
+        },
+        { server: httpServer, path: apolloServer.graphqlPath },
+    );
 
     const PORT = 4000;
 

@@ -1,25 +1,30 @@
 /* Instruments */
-import { Resolver } from '../types';
+import { Resolver, EV } from '../types';
 
 const linkCreatedSubscribe: Resolver = (_, __, ctx) => {
-    return ctx.pubsub.asyncIterator(['LINK_CREATED']);
+    return ctx.pubsub.asyncIterator([EV.LINK_CREATED]);
 };
 
-const linkCreated = {
+type Subscriber = {
+    subscribe: Resolver;
+    resolve: Resolver;
+};
+
+const linkCreated: Subscriber = {
     subscribe: linkCreatedSubscribe,
-    resolve: (payload: any) => {
-        return payload;
+    resolve: parent => {
+        return parent;
     },
 };
 
 const postVotedSubscribe: Resolver = (_, __, ctx) => {
-    return ctx.pubsub.asyncIterator(['NEW_VOTE']);
+    return ctx.pubsub.asyncIterator([EV.POST_VOTED]);
 };
 
-const postVoted = {
+const postVoted: Subscriber = {
     subscribe: postVotedSubscribe,
-    resolve: (payload: any) => {
-        return payload;
+    resolve: parent => {
+        return parent;
     },
 };
 
