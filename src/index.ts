@@ -65,8 +65,13 @@ export const pubsub = new PubSub();
             schema,
             execute,
             subscribe,
-            onConnect() {
-                return { pubsub };
+            onConnect(connectionParams: { Authorization: string }) {
+                const subscriptionsCtx = {
+                    pubsub,
+                    userId: getUserId(null, connectionParams.Authorization),
+                };
+
+                return subscriptionsCtx;
             },
         },
         { server: httpServer, path: apolloServer.graphqlPath },

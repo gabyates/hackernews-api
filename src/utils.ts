@@ -13,7 +13,7 @@ const getTokenPayload = (token: string) => {
     return jwtPayload.userId;
 };
 
-export const getUserId = (authHeader: string, authToken?: string) => {
+export const getUserId = (authHeader: string | null, authToken?: string) => {
     if (authHeader) {
         const token = authHeader.replace('Bearer ', '');
 
@@ -29,4 +29,6 @@ export const getUserId = (authHeader: string, authToken?: string) => {
 
         return userId;
     }
+
+    return null;
 };
