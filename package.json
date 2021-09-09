@@ -11,7 +11,7 @@
         "@graphql-tools/graphql-file-loader": "7.1.0",
         "@graphql-tools/load": "7.3.0",
         "@graphql-tools/schema": "8.2.0",
-        "@prisma/client": "2.30.3",
+        "@prisma/client": "3.0.1",
         "apollo-server": "3.3.0",
         "apollo-server-core": "3.3.0",
         "bcryptjs": "2.4.3",
@@ -20,7 +20,7 @@
         "graphql-subscriptions": "1.2.1",
         "graphql-ws": "5.5.0",
         "jsonwebtoken": "8.5.1",
-        "prisma": "2.30.3",
+        "prisma": "3.0.1",
         "subscriptions-transport-ws": "0.9.19"
     },
     "devDependencies": {
