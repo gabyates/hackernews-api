@@ -5,15 +5,20 @@ const linkCreatedSubscribe: Resolver = (_, __, ctx) => {
     return ctx.pubsub.asyncIterator([EV.LINK_CREATED]);
 };
 
-type Subscriber = {
-    subscribe: Resolver;
-    resolve: Resolver;
+type Subscriber<TParent = unknown> = {
+    subscribe: Resolver<TParent>;
+    resolve: Resolver<TParent>;
 };
 
-const linkCreated: Subscriber = {
+const linkCreated: Subscriber<Record<any, any>> = {
     subscribe: linkCreatedSubscribe,
-    resolve: parent => {
-        return parent;
+    resolve: (parent, _, ctx) => {
+        return {
+            ...parent,
+            postedBy: ctx.prisma.link
+                .findUnique({ where: { id: parent.id } })
+                .postedBy(),
+        };
     },
 };
 

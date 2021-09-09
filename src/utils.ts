@@ -25,7 +25,9 @@ export const getUserId = (authHeader: string | null, authToken?: string) => {
 
         return userId;
     } else if (authToken) {
-        const userId = getTokenPayload(authToken);
+        const token = authToken.replace('Bearer ', '');
+
+        const userId = getTokenPayload(token);
 
         return userId;
     }

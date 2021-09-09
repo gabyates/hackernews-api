@@ -68,6 +68,7 @@ export const pubsub = new PubSub();
             onConnect(connectionParams: { Authorization: string }) {
                 const subscriptionsCtx = {
                     pubsub,
+                    prisma,
                     userId: getUserId(null, connectionParams.Authorization),
                 };
 
