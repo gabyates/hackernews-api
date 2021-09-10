@@ -81,14 +81,18 @@ export const pubsub = new PubSub();
         { server: httpServer, path: apolloServer.graphqlPath },
     );
 
+    const PORT = process.env.PORT;
+    const { port } = process.env.PORT;
+    console.log(PORT, port);
+
     await new Promise<void>(resolve =>
-        httpServer.listen({ port: process.env.PORT }, resolve),
+        httpServer.listen({ port: PORT }, resolve),
     );
 
     console.log(
-        `🚀 Server ready at http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`,
+        `🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`,
     );
     console.log(
-        `🚀 Subscription endpoint ready at ws://localhost:${process.env.PORT}${apolloServer.graphqlPath}`,
+        `🚀 Subscription endpoint ready at ws://localhost:${PORT}${apolloServer.graphqlPath}`,
     );
 })();
