@@ -82,6 +82,7 @@ export const pubsub = new PubSub();
     );
 
     const PORT = process.env.PORT;
+    // @ts-ignore
     const { port } = process.env.PORT;
     console.log(PORT, port);
 
