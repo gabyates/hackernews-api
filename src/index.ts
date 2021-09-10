@@ -78,11 +78,11 @@ export const pubsub = new PubSub();
         { server: httpServer, path: apolloServer.graphqlPath },
     );
 
-    const PORT = 4000;
-
     await new Promise<void>(resolve =>
         httpServer.listen({ port: PORT }, resolve),
     );
+
+    const { PORT } = process.env;
 
     console.log(
         `🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`,
