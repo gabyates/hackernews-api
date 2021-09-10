@@ -1,4 +1,6 @@
 schema: './src/schema.graphql'
+config:
+    avoidOptionals: true
 generates:
     src/graphql/index.tsx:
         plugins:

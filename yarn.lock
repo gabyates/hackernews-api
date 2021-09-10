@@ -3991,11 +3991,6 @@ ts-node@^9, ts-node@^9.0.0:
     source-map-support "^0.5.17"
     yn "3.1.1"
 
-tsconfig-dva@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/tsconfig-dva/-/tsconfig-dva-0.0.3.tgz#674b7fc10750c677438abb269b2b57471dbfd38d"
-  integrity sha512-O4S/lsygDKICAQ5K4hkzBg2P9OtOKpTZ0umgHsTFFpm9u7Hw2JD/WGiwiv3BYuo5r7uT+fZJdSVaHpJpIURzwQ==
-
 tsconfig@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/tsconfig/-/tsconfig-7.0.0.tgz#84538875a4dc216e5c4a5432b3a4dec3d54e91b7"

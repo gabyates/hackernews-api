@@ -4,12 +4,14 @@ import jwt from 'jsonwebtoken';
 
 /* Instruments */
 import { Resolver, EV } from '../types';
+import * as gql from '../graphql/index';
 import { APP_SECRET } from '../utils';
 
-const signup: Resolver<
-    unknown,
-    { email: string; password: string; name: string }
-> = async (_, args, ctx) => {
+const signup: Resolver<unknown, gql.MutationSignupArgs> = async (
+    _,
+    args,
+    ctx,
+) => {
     if (!APP_SECRET) {
         throw new Error('APP_SECRET variable not found!');
     }
@@ -36,7 +38,7 @@ const signup: Resolver<
     };
 };
 
-const login: Resolver<unknown, { email: string; password: string }> = async (
+const login: Resolver<unknown, gql.MutationLoginArgs> = async (
     _,
     args,
     ctx,
@@ -67,37 +69,39 @@ const login: Resolver<unknown, { email: string; password: string }> = async (
     };
 };
 
-const createLink: Resolver<unknown, { url: string; description: string }> =
-    async (_, args, ctx) => {
-        if (!ctx.userId) {
-            throw new Error('User is not authenticated.');
-        }
+const createLink: Resolver<unknown, gql.MutationCreateLinkArgs> = async (
+    _,
+    args,
+    ctx,
+) => {
+    if (!ctx.userId) {
+        throw new Error('User is not authenticated.');
+    }
 
-        const newLink = await ctx.prisma.link.create({
-            data: {
-                url: args.url,
-                description: args.description,
-                postedBy: {
-                    connect: {
-                        id: ctx.userId,
-                    },
+    const newLink = await ctx.prisma.link.create({
+        data: {
+            url: args.url,
+            description: args.description,
+            postedBy: {
+                connect: {
+                    id: ctx.userId,
                 },
             },
-        });
-
-        ctx.pubsub.publish(EV.LINK_CREATED, newLink);
-
-        return newLink;
-    };
-
-const updateLink: Resolver<
-    unknown,
-    { id: number; url: string; description: string }
-> = async (_, args, ctx) => {
-    const updatedLink = await ctx.prisma.link.update({
-        where: {
-            id: args.id,
         },
+    });
+
+    ctx.pubsub.publish(EV.LINK_CREATED, newLink);
+
+    return newLink;
+};
+
+const updateLink: Resolver<unknown, gql.MutationUpdateLinkArgs> = async (
+    _,
+    args,
+    ctx,
+) => {
+    const updatedLink = await ctx.prisma.link.update({
+        where: { id: args.id as unknown as number },
         data: {
             url: args.url,
             description: args.description,
@@ -107,12 +111,14 @@ const updateLink: Resolver<
     return updatedLink;
 };
 
-const deleteLink: Resolver<unknown, { id: number }> = async (_, args, ctx) => {
+const deleteLink: Resolver<unknown, gql.MutationDeleteLinkArgs> = async (
+    _,
+    args,
+    ctx,
+) => {
     try {
         await ctx.prisma.link.delete({
-            where: {
-                id: args.id,
-            },
+            where: { id: args.id as unknown as number },
         });
     } catch (error) {
         console.log(error);

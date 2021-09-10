@@ -33,7 +33,6 @@
         "apollo-server-express": "3.3.0",
         "ts-node": "10.2.1",
         "ts-node-dev": "1.1.8",
-        "tsconfig-dva": "0.0.3",
         "typescript": "4.4.2"
     }
 }

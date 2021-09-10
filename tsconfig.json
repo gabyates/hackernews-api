@@ -1,6 +1,4 @@
 {
-    "extends": "tsconfig-dva",
-
     "compilerOptions": {
         /* Module resolution */
         "baseUrl": ".",
@@ -12,6 +10,7 @@
         "strict": true,
         "lib": ["ESNext"],
         "esModuleInterop": true,
-        "module": "CommonJS"
+        "module": "CommonJS",
+        "jsx": "preserve"
     }
 }
