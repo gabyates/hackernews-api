@@ -11,11 +11,14 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PrismaClient } from '@prisma/client';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { PubSub } from 'graphql-subscriptions';
+import dotenv from 'dotenv';
 
 /* Instruments */
 import { ServerContext } from './types';
 import { resolvers } from './resolvers';
 import { getUserId } from './utils';
+
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -79,15 +82,13 @@ export const pubsub = new PubSub();
     );
 
     await new Promise<void>(resolve =>
-        httpServer.listen({ port: PORT }, resolve),
+        httpServer.listen({ port: process.env.PORT }, resolve),
     );
 
-    const { PORT } = process.env;
-
     console.log(
-        `🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`,
+        `🚀 Server ready at http://localhost:${process.env.PORT}${apolloServer.graphqlPath}`,
     );
     console.log(
-        `🚀 Subscription endpoint ready at ws://localhost:${PORT}${apolloServer.graphqlPath}`,
+        `🚀 Subscription endpoint ready at ws://localhost:${process.env.PORT}${apolloServer.graphqlPath}`,
     );
 })();
