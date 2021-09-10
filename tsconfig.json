@@ -1,10 +1,17 @@
 {
+    "extends": "tsconfig-dva",
+
     "compilerOptions": {
+        /* Module resolution */
+        "baseUrl": ".",
+        "paths": { "@/*": ["src/*"] },
+
         "moduleResolution": "Node",
         "sourceMap": true,
         "outDir": "dist",
         "strict": true,
-        "lib": ["esnext", "dom"],
-        "esModuleInterop": true
+        "lib": ["ESNext"],
+        "esModuleInterop": true,
+        "module": "CommonJS"
     }
 }
