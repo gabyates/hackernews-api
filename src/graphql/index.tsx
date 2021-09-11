@@ -25,6 +25,7 @@ export type Feed = {
 
 export type Link = {
   __typename?: 'Link';
+  createdAt: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['ID'];
   postedBy: User;

@@ -1,5 +1,9 @@
 /* Core */
+import dotenv from 'dotenv';
 import { join } from 'path';
+
+dotenv.config({ path: join(__dirname, '../.env.development.local') });
+
 import { createServer } from 'http';
 import { execute, subscribe } from 'graphql';
 import express from 'express';
@@ -11,14 +15,11 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PrismaClient } from '@prisma/client';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { PubSub } from 'graphql-subscriptions';
-import dotenv from 'dotenv';
 
 /* Instruments */
 import { ServerContext } from './types';
 import { resolvers } from './resolvers';
 import { getUserId } from './utils';
-
-dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -82,9 +83,6 @@ export const pubsub = new PubSub();
     );
 
     const PORT = process.env.PORT;
-    // @ts-ignore
-    const { port } = process.env.PORT;
-    console.log(PORT, port);
 
     await new Promise<void>(resolve =>
         httpServer.listen({ port: PORT }, resolve),
