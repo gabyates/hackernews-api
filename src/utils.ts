@@ -8,9 +8,17 @@ const getTokenPayload = (token: string) => {
         throw new Error('APP_SECRET variable not found!');
     }
 
-    const jwtPayload = jwt.verify(token, APP_SECRET) as { userId: string };
+    let userId = null;
 
-    return jwtPayload.userId;
+    try {
+        const jwtPayload = jwt.verify(token, APP_SECRET) as { userId: string };
+
+        userId = jwtPayload.userId;
+    } catch (error) {
+        console.log(error);
+    }
+
+    return userId;
 };
 
 export const getUserId = (authHeader: string | null, authToken?: string) => {

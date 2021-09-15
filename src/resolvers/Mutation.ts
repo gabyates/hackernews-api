@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 /* Instruments */
 import { Resolver, EV } from '../types';
-import * as gql from '../graphql/index';
+import * as gql from '../graphql';
 import { APP_SECRET } from '../utils';
 
 const signup: Resolver<unknown, gql.MutationSignupArgs> = async (
@@ -30,7 +30,11 @@ const signup: Resolver<unknown, gql.MutationSignupArgs> = async (
         data: { ...args, password },
     });
 
+    console.log(user.id);
+
     const token = jwt.sign({ userId: user.id }, APP_SECRET);
+
+    console.log(token);
 
     return {
         token,
