@@ -5,10 +5,6 @@ const feed: Resolver<
     unknown,
     { filter: string; skip: number; take: number; orderBy: any }
 > = async (_, args, ctx) => {
-    if (!ctx.userId) {
-        throw new Error('Not authenticated.');
-    }
-
     const { filter: contains, skip, take, orderBy } = args;
 
     const where = args.filter

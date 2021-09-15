@@ -120,9 +120,11 @@ const deleteLink: Resolver<unknown, gql.MutationDeleteLinkArgs> = async (
     args,
     ctx,
 ) => {
+    console.log(args.id);
+    console.log(typeof args.id);
     try {
         await ctx.prisma.link.delete({
-            where: { id: args.id as unknown as number },
+            where: { id: Number(args.id) as unknown as number },
         });
     } catch (error) {
         console.log(error);
