@@ -29,5 +29,5 @@ export type ServerContext = {
 
 export enum EV {
     LINK_CREATED = 'LINK_CREATED',
-    POST_VOTED = 'POST_VOTED',
+    LINK_VOTED = 'LINK_VOTED',
 }

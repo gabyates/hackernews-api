@@ -15,7 +15,7 @@ const feed: Resolver<
         where,
         skip,
         take,
-        orderBy,
+        // orderBy,
     });
 
     const count = await ctx.prisma.link.count({ where });

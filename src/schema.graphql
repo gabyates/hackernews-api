@@ -16,7 +16,7 @@ type Mutation {
 
 type Subscription {
     linkCreated: Link
-    postVoted: Vote
+    linkVoted: Vote
 }
 
 type AuthPayload {

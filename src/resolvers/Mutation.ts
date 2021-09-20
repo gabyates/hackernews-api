@@ -162,7 +162,7 @@ const vote: Resolver = async (_, args, ctx) => {
         },
     });
 
-    ctx.pubsub.publish(EV.POST_VOTED, newVote);
+    ctx.pubsub.publish(EV.LINK_VOTED, newVote);
 
     return newVote;
 };

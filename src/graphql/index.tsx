@@ -112,7 +112,7 @@ export enum Sort {
 export type Subscription = {
   __typename?: 'Subscription';
   linkCreated: Maybe<Link>;
-  postVoted: Maybe<Vote>;
+  linkVoted: Maybe<Vote>;
 };
 
 export type User = {
