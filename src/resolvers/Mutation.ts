@@ -30,11 +30,7 @@ const signup: Resolver<unknown, gql.MutationSignupArgs> = async (
         data: { ...args, password },
     });
 
-    console.log(user.id);
-
     const token = jwt.sign({ userId: user.id }, APP_SECRET);
-
-    console.log(token);
 
     return {
         token,
@@ -120,8 +116,6 @@ const deleteLink: Resolver<unknown, gql.MutationDeleteLinkArgs> = async (
     args,
     ctx,
 ) => {
-    console.log(args.id);
-    console.log(typeof args.id);
     try {
         await ctx.prisma.link.delete({
             where: { id: Number(args.id) as unknown as number },
