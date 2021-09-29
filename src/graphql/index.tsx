@@ -33,12 +33,6 @@ export type Link = {
   votes: Array<Vote>;
 };
 
-export type LinkOrderByInput = {
-  createdAt: Maybe<Sort>;
-  description: Maybe<Sort>;
-  url: Maybe<Sort>;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   createLink: Link;
@@ -94,7 +88,6 @@ export type Query = {
 
 export type QueryFeedArgs = {
   filter: Maybe<Scalars['String']>;
-  orderBy: Maybe<LinkOrderByInput>;
   skip: Maybe<Scalars['Int']>;
   take: Maybe<Scalars['Int']>;
 };

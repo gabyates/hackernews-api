@@ -1,5 +1,5 @@
 type Query {
-    feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): Feed!
+    feed(filter: String, skip: Int, take: Int): Feed!
     link(id: ID!): Link
 }
 
@@ -43,12 +43,6 @@ type Link {
     postedBy: User!
     votes: [Vote!]!
     createdAt: String!
-}
-
-input LinkOrderByInput {
-    description: SORT
-    url: SORT
-    createdAt: SORT
 }
 
 enum SORT {

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 /* Instruments */
-import { Resolver, EV } from '../types';
+import { Resolver, EVENT } from '../types';
 import * as gql from '../graphql';
 import { APP_SECRET } from '../utils';
 
@@ -80,9 +80,9 @@ const createLink: Resolver<unknown, gql.MutationCreateLinkArgs> = async (
 
     const newLink = await ctx.prisma.link.create({
         data: {
-            url: args.url,
+            url:         args.url,
             description: args.description,
-            postedBy: {
+            postedBy:    {
                 connect: {
                     id: ctx.userId,
                 },
@@ -90,7 +90,7 @@ const createLink: Resolver<unknown, gql.MutationCreateLinkArgs> = async (
         },
     });
 
-    ctx.pubsub.publish(EV.LINK_CREATED, newLink);
+    ctx.pubsub.publish(EVENT.LINK_CREATED, newLink);
 
     return newLink;
 };
@@ -102,8 +102,8 @@ const updateLink: Resolver<unknown, gql.MutationUpdateLinkArgs> = async (
 ) => {
     const updatedLink = await ctx.prisma.link.update({
         where: { id: args.id as unknown as number },
-        data: {
-            url: args.url,
+        data:  {
+            url:         args.url,
             description: args.description,
         },
     });
@@ -130,7 +130,7 @@ const deleteLink: Resolver<unknown, gql.MutationDeleteLinkArgs> = async (
 };
 
 const vote: Resolver = async (_, args, ctx) => {
-    const userId = ctx.userId;
+    const { userId } = ctx;
 
     if (!userId) {
         return null;
@@ -140,12 +140,12 @@ const vote: Resolver = async (_, args, ctx) => {
         where: {
             linkId_userId: {
                 linkId: Number(args.linkId),
-                userId: userId,
+                userId,
             },
         },
     });
 
-    if (Boolean(isAlreadyVoted)) {
+    if (isAlreadyVoted) {
         throw new Error(`Already voted for link: ${args.linkId}`);
     }
 
@@ -156,7 +156,7 @@ const vote: Resolver = async (_, args, ctx) => {
         },
     });
 
-    ctx.pubsub.publish(EV.LINK_VOTED, newVote);
+    ctx.pubsub.publish(EVENT.LINK_VOTED, newVote);
 
     return newVote;
 };

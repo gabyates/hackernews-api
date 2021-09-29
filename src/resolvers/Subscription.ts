@@ -1,13 +1,13 @@
 /* Instruments */
-import { Resolver, EV } from '../types';
+import { Resolver, EVENT } from '../types';
 
 const linkCreatedSubscribe: Resolver = (_, __, ctx) => {
-    return ctx.pubsub.asyncIterator([EV.LINK_CREATED]);
+    return ctx.pubsub.asyncIterator([ EVENT.LINK_CREATED ]);
 };
 
 const linkCreated: Subscriber<Record<any, any>> = {
     subscribe: linkCreatedSubscribe,
-    resolve: (parent, _, ctx) => {
+    resolve:   (parent, _, ctx) => {
         return {
             ...parent,
             postedBy: ctx.prisma.link
@@ -18,12 +18,12 @@ const linkCreated: Subscriber<Record<any, any>> = {
 };
 
 const linkVotedSubscribe: Resolver = (_, __, ctx) => {
-    return ctx.pubsub.asyncIterator([EV.LINK_VOTED]);
+    return ctx.pubsub.asyncIterator([ EVENT.LINK_VOTED ]);
 };
 
 const linkVoted: Subscriber = {
     subscribe: linkVotedSubscribe,
-    resolve: parent => {
+    resolve:   parent => {
         return parent;
     },
 };

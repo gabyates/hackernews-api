@@ -1,37 +1,43 @@
 /* Instruments */
 import { Resolver } from '../types';
+import * as gql from '../graphql';
 
-const feed: Resolver<
-    unknown,
-    { filter: string; skip: number; take: number; orderBy: any }
-> = async (_, args, ctx) => {
-    const { filter: contains, skip, take, orderBy } = args;
+export const Query: QueryResolvers = {
+    feed: async (_, args = { filter: '', skip: 0, take: 20 }, ctx) => {
+        const { filter: contains, skip, take } = args;
 
-    const where = args.filter
-        ? { OR: [{ url: { contains } }, { description: { contains } }] }
-        : {};
+        const v = skip;
 
-    const links = await ctx.prisma.link.findMany({
-        where,
-        skip,
-        take,
-        // orderBy,
-    });
+        console.log(v);
 
-    const count = await ctx.prisma.link.count({ where });
+        const where = contains
+            ? { OR: [{ url: { contains } }, { description: { contains } }] }
+            : {};
 
-    return { links, count };
+        const links = await ctx.prisma.link.findMany({
+            where,
+            // @ts-ignore
+            skip,
+            // @ts-ignore
+            take,
+        });
+
+        const count = await ctx.prisma.link.count({ where });
+
+        return { links, count };
+    },
+
+    link: (_, args, ctx) => {
+        if (!ctx.userId) {
+            throw new Error('Not authenticated.');
+        }
+
+        return ctx.prisma.link.findUnique({ where: { id: args.id } });
+    },
 };
 
-const link: Resolver<{ id: number }> = (_, args, ctx) => {
-    if (!ctx.userId) {
-        throw new Error('Not authenticated.');
-    }
+interface QueryResolvers {
+    feed: Resolver<unknown, gql.QueryFeedArgs>;
 
-    return ctx.prisma.link.findUnique({ where: { id: args.id } });
-};
-
-export const Query = {
-    feed,
-    link,
-};
+    link: Resolver<unknown, { id: number }>;
+}

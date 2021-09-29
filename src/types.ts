@@ -1,5 +1,5 @@
 /* Core */
-import { GraphQLFieldResolver } from 'graphql';
+import type { GraphQLFieldResolver } from 'graphql';
 import type { PubSub } from 'graphql-subscriptions';
 import type { PrismaClient } from '@prisma/client';
 import type { Request, Response } from 'express';
@@ -7,27 +7,23 @@ import type { Request, Response } from 'express';
 export type Resolver<
     TSource = unknown,
     TArgs = { [argName: string]: any },
-> = GraphQLFieldResolver<
-    TSource,
-    {
-        req: Request;
-        userId: number | null;
-        prisma: PrismaClient;
-        pubsub: PubSub;
-    },
-    TArgs
->;
+> = GraphQLFieldResolver<TSource, ResolverCtx, TArgs>;
 
-export type ServerContext = {
+export interface ResolverCtx {
+    req: Request;
+    userId: number | null;
+    prisma: PrismaClient;
+    pubsub: PubSub;
+}
+
+export interface ExpressCtx {
     req: Request & {
-        headers: {
-            authorization: string;
-        };
+        headers: { authorization: string };
     };
     res: Response;
-};
+}
 
-export enum EV {
+export enum EVENT {
     LINK_CREATED = 'LINK_CREATED',
     LINK_VOTED = 'LINK_VOTED',
 }

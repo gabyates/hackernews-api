@@ -1,10 +1,7 @@
 /* Core */
-import dotenv from 'dotenv';
 import { join } from 'path';
-
-dotenv.config({ path: join(__dirname, '../.env.development.local') });
-
 import { createServer } from 'http';
+import dotenv from 'dotenv';
 import { execute, subscribe } from 'graphql';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
@@ -17,14 +14,16 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { PubSub } from 'graphql-subscriptions';
 
 /* Instruments */
-import { ServerContext } from './types';
+import { ExpressCtx } from './types';
 import { resolvers } from './resolvers';
 import { getUserId } from './utils';
 
+dotenv.config({ path: join(__dirname, '../.env.development.local') });
+
 const prisma = new PrismaClient();
 
-const typeDefs = loadSchemaSync(join(__dirname, './schema.graphql'), {
-    loaders: [new GraphQLFileLoader()],
+const typeDefs = loadSchemaSync(join(__dirname, './graphql/schema.graphql'), {
+    loaders: [ new GraphQLFileLoader() ],
 }) as unknown as string;
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -36,8 +35,8 @@ export const pubsub = new PubSub();
 
     const apolloServer = new ApolloServer({
         schema,
-        context: (expressContext: ServerContext) => {
-            const { req } = expressContext;
+        context: (expressCtx: ExpressCtx) => {
+            const { req } = expressCtx;
 
             return {
                 req,
@@ -82,11 +81,9 @@ export const pubsub = new PubSub();
         { server: httpServer, path: apolloServer.graphqlPath },
     );
 
-    const PORT = process.env.PORT;
+    const { PORT } = process.env;
 
-    await new Promise<void>(resolve =>
-        httpServer.listen({ port: PORT }, resolve),
-    );
+    await new Promise<void>(resolve => httpServer.listen({ port: PORT }, resolve));
 
     console.log(
         `🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`,
