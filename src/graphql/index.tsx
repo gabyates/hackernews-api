@@ -13,8 +13,8 @@ export type Scalars = {
 
 export type AuthPayload = {
   __typename?: 'AuthPayload';
-  token: Maybe<Scalars['String']>;
-  user: Maybe<User>;
+  token?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
 };
 
 export type Feed = {
@@ -37,10 +37,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   createLink: Link;
   deleteLink: Scalars['Boolean'];
-  login: Maybe<AuthPayload>;
-  signup: Maybe<AuthPayload>;
+  login?: Maybe<AuthPayload>;
+  signup?: Maybe<AuthPayload>;
   updateLink: Link;
-  vote: Maybe<Vote>;
+  vote?: Maybe<Vote>;
 };
 
 
@@ -82,14 +82,14 @@ export type MutationVoteArgs = {
 export type Query = {
   __typename?: 'Query';
   feed: Feed;
-  link: Maybe<Link>;
+  link?: Maybe<Link>;
 };
 
 
 export type QueryFeedArgs = {
-  filter: Maybe<Scalars['String']>;
-  skip: Maybe<Scalars['Int']>;
-  take: Maybe<Scalars['Int']>;
+  filter: Scalars['String'];
+  skip: Scalars['Int'];
+  take: Scalars['Int'];
 };
 
 
@@ -104,8 +104,8 @@ export enum Sort {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  linkCreated: Maybe<Link>;
-  linkVoted: Maybe<Vote>;
+  linkCreated?: Maybe<Link>;
+  linkVoted?: Maybe<Vote>;
 };
 
 export type User = {

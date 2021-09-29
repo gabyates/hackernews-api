@@ -1,5 +1,5 @@
 type Query {
-    feed(filter: String, skip: Int, take: Int): Feed!
+    feed(filter: String!, skip: Int!, take: Int!): Feed!
     link(id: ID!): Link
 }
 

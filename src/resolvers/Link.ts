@@ -2,19 +2,26 @@
 import { Resolver } from '../types';
 import * as gql from '../graphql';
 
-const postedBy: Resolver<gql.Link> = (parent, _, ctx) => {
-    return ctx.prisma.link
-        .findUnique({ where: { id: parent.id as unknown as number } })
-        .postedBy();
+export const Link: LinkResolvers = {
+    postedBy(parent, _, ctx) {
+        const postedBy = ctx.prisma.link
+            .findUnique({ where: { id: parent.id } })
+            .postedBy();
+
+        return postedBy;
+    },
+
+    votes(parent, _, ctx) {
+        const votes = ctx.prisma.link
+            .findUnique({ where: { id: parent.id } })
+            .votes();
+
+        return votes;
+    },
 };
 
-const votes: Resolver<gql.Link> = (parent, _, ctx) => {
-    return ctx.prisma.link
-        .findUnique({ where: { id: parent.id as unknown as number } })
-        .votes();
-};
-
-export const Link = {
-    postedBy,
-    votes,
-};
+/* Types */
+interface LinkResolvers {
+    postedBy: Resolver<gql.Link>;
+    votes: Resolver<gql.Link>;
+}

@@ -6,28 +6,20 @@ import { execute, subscribe } from 'graphql';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
-import { loadSchemaSync } from '@graphql-tools/load';
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import { PrismaClient } from '@prisma/client';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { PubSub } from 'graphql-subscriptions';
+import chalk from 'chalk';
 
 /* Instruments */
 import { ExpressCtx } from './types';
-import { resolvers } from './resolvers';
 import { getUserId } from './utils';
+import { schema } from './graphql/schema';
 
 dotenv.config({ path: join(__dirname, '../.env.development.local') });
 
 const prisma = new PrismaClient();
-
-const typeDefs = loadSchemaSync(join(__dirname, './graphql/schema.graphql'), {
-    loaders: [ new GraphQLFileLoader() ],
-}) as unknown as string;
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-export const pubsub = new PubSub();
+const pubsub = new PubSub();
 
 (async () => {
     const app = express();
@@ -81,14 +73,23 @@ export const pubsub = new PubSub();
         { server: httpServer, path: apolloServer.graphqlPath },
     );
 
-    const { PORT } = process.env;
+    /* eslint-disable-next-line prefer-destructuring */
+    const PORT = process.env.PORT;
 
     await new Promise<void>(resolve => httpServer.listen({ port: PORT }, resolve));
 
     console.log(
-        `🚀 Server ready at http://localhost:${PORT}${apolloServer.graphqlPath}`,
+        chalk.cyanBright(
+            `🚀 Server ready at ${chalk.blueBright(
+                `http://localhost:${PORT}${apolloServer.graphqlPath}`,
+            )}`,
+        ),
     );
     console.log(
-        `🚀 Subscription endpoint ready at ws://localhost:${PORT}${apolloServer.graphqlPath}`,
+        chalk.cyanBright(
+            `📲 Subscription endpoint ready at ${chalk.blueBright(
+                `ws://localhost:${PORT}${apolloServer.graphqlPath}`,
+            )}`,
+        ),
     );
 })();

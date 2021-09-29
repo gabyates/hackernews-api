@@ -3,12 +3,8 @@ import { Resolver } from '../types';
 import * as gql from '../graphql';
 
 export const Query: QueryResolvers = {
-    feed: async (_, args = { filter: '', skip: 0, take: 20 }, ctx) => {
+    feed: async (_, args, ctx) => {
         const { filter: contains, skip, take } = args;
-
-        const v = skip;
-
-        console.log(v);
 
         const where = contains
             ? { OR: [{ url: { contains } }, { description: { contains } }] }
@@ -16,9 +12,7 @@ export const Query: QueryResolvers = {
 
         const links = await ctx.prisma.link.findMany({
             where,
-            // @ts-ignore
             skip,
-            // @ts-ignore
             take,
         });
 
@@ -38,6 +32,5 @@ export const Query: QueryResolvers = {
 
 interface QueryResolvers {
     feed: Resolver<unknown, gql.QueryFeedArgs>;
-
-    link: Resolver<unknown, { id: number }>;
+    link: Resolver<unknown, gql.QueryLinkArgs>;
 }

@@ -11,7 +11,7 @@ export type Resolver<
 
 export interface ResolverCtx {
     req: Request;
-    userId: number | null;
+    userId: string | null;
     prisma: PrismaClient;
     pubsub: PubSub;
 }

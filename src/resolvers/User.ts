@@ -1,10 +1,17 @@
 /* Instruments */
+import * as gql from '../graphql';
 import { Resolver } from '../types';
 
-const links: Resolver<{ id: number }> = (parent, _, ctx) => {
-    return ctx.prisma.user.findUnique({ where: { id: parent.id } }).links();
+export const User: UserResolvers = {
+    links(parent, _, ctx) {
+        const user = ctx.prisma.user
+            .findUnique({ where: { id: parent.id } })
+            .links();
+
+        return user;
+    },
 };
 
-export const User = {
-    links,
-};
+interface UserResolvers {
+    links: Resolver<gql.User>;
+}
