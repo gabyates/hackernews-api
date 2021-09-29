@@ -5,7 +5,7 @@ import type { PrismaClient } from '@prisma/client';
 import type { Request, Response } from 'express';
 
 export type Resolver<
-    TSource = unknown,
+    TSource = undefined,
     TArgs = { [argName: string]: any },
 > = GraphQLFieldResolver<TSource, ResolverCtx, TArgs>;
 
@@ -24,6 +24,6 @@ export interface ExpressCtx {
 }
 
 export enum EVENT {
-    LINK_CREATED = 'LINK_CREATED',
-    LINK_VOTED = 'LINK_VOTED',
+    POST_CREATED = 'POST_CREATED',
+    POST_VOTED = 'POST_VOTED',
 }

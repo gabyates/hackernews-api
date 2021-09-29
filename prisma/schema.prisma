@@ -10,7 +10,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Link {
+model Post {
   id          String   @id @default(uuid()) 
   createdAt   DateTime @default(now())
   description String
@@ -25,16 +25,16 @@ model User {
   name     String
   email    String @unique
   password String
-  links    Link[]
+  posts    Post[]
   votes    Vote[]
 }
 
 model Vote {
-  id     Int  @id @default(autoincrement())
-  link   Link @relation(fields: [linkId], references: [id])
-  linkId String
+  id     String  @id @default(uuid())
+  post   Post @relation(fields: [postId], references: [id])
+  postId String
   user   User @relation(fields: [userId], references: [id])
   userId String
 
-  @@unique([linkId, userId], name: "linkVotedBy")
+  @@unique([postId, userId], name: "postVotedBy")
 }

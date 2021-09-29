@@ -1,10 +1,6 @@
 schema: './src/graphql/schema.graphql'
 
-config:
-    dedupeOperationSuffix: true
-
 generates:
     src/graphql/index.tsx:
         plugins:
             - typescript
-            - typescript-operations

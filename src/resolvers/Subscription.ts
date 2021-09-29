@@ -1,40 +1,55 @@
+/* Core */
+import { Post, Vote } from '@prisma/client';
+
 /* Instruments */
 import { Resolver, EVENT } from '../types';
 
-const linkCreatedSubscribe: Resolver = (_, __, ctx) => {
-    return ctx.pubsub.asyncIterator([ EVENT.LINK_CREATED ]);
-};
+export const Subscription: SubscriptionResolvers = {
+    postCreated: {
+        subscribe(_, __, ctx) {
+            return ctx.pubsub.asyncIterator([ EVENT.POST_CREATED ]);
+        },
+        async resolve(post, _, ctx) {
+            const postedBy = await ctx.prisma.post
+                .findUnique({ where: { id: post.id } })
+                .postedBy();
 
-const linkCreated: Subscriber<Record<any, any>> = {
-    subscribe: linkCreatedSubscribe,
-    resolve:   (parent, _, ctx) => {
-        return {
-            ...parent,
-            postedBy: ctx.prisma.link
-                .findUnique({ where: { id: parent.id } })
-                .postedBy(),
-        };
+            return {
+                ...post,
+                postedBy,
+            };
+        },
     },
-};
+    postVoted: {
+        subscribe(_, __, ctx) {
+            return ctx.pubsub.asyncIterator([ EVENT.POST_VOTED ]);
+        },
+        async resolve(parent, __, ctx) {
+            const [ post, user ] = await Promise.all([
+                ctx.prisma.post.findUnique({
+                    where: { id: parent.postId },
+                }),
+                ctx.prisma.user.findUnique({
+                    where: { id: parent.userId },
+                }),
+            ]);
 
-const linkVotedSubscribe: Resolver = (_, __, ctx) => {
-    return ctx.pubsub.asyncIterator([ EVENT.LINK_VOTED ]);
-};
-
-const linkVoted: Subscriber = {
-    subscribe: linkVotedSubscribe,
-    resolve:   parent => {
-        return parent;
+            return {
+                id: parent.id,
+                post,
+                user,
+            };
+        },
     },
 };
 
 /* Types */
-type Subscriber<TParent = unknown> = {
-    subscribe: Resolver<TParent>;
+type Subscriber<TParent = Record<string, any>> = {
+    subscribe: Resolver;
     resolve: Resolver<TParent>;
 };
 
-export const Subscription = {
-    linkCreated,
-    linkVoted,
-};
+interface SubscriptionResolvers {
+    postCreated: Subscriber<Post>;
+    postVoted: Subscriber<Vote>;
+}

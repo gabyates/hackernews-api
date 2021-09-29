@@ -14,43 +14,33 @@ export type Scalars = {
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   token?: Maybe<Scalars['String']>;
-  user?: Maybe<User>;
+  user: User;
 };
 
 export type Feed = {
   __typename?: 'Feed';
   count: Scalars['Int'];
-  links: Array<Link>;
-};
-
-export type Link = {
-  __typename?: 'Link';
-  createdAt: Scalars['String'];
-  description: Scalars['String'];
-  id: Scalars['ID'];
-  postedBy: User;
-  url: Scalars['String'];
-  votes: Array<Vote>;
+  posts: Array<Post>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createLink: Link;
-  deleteLink: Scalars['Boolean'];
+  createPost: Post;
+  deletePost: Scalars['Boolean'];
   login?: Maybe<AuthPayload>;
   signup?: Maybe<AuthPayload>;
-  updateLink: Link;
+  updatePost: Post;
   vote?: Maybe<Vote>;
 };
 
 
-export type MutationCreateLinkArgs = {
+export type MutationCreatePostArgs = {
   description: Scalars['String'];
   url: Scalars['String'];
 };
 
 
-export type MutationDeleteLinkArgs = {
+export type MutationDeletePostArgs = {
   id: Scalars['ID'];
 };
 
@@ -68,7 +58,7 @@ export type MutationSignupArgs = {
 };
 
 
-export type MutationUpdateLinkArgs = {
+export type MutationUpdatePostArgs = {
   description: Scalars['String'];
   id: Scalars['ID'];
   url: Scalars['String'];
@@ -76,24 +66,40 @@ export type MutationUpdateLinkArgs = {
 
 
 export type MutationVoteArgs = {
-  linkId: Scalars['ID'];
+  postId: Scalars['ID'];
+};
+
+export type Post = {
+  __typename?: 'Post';
+  createdAt: Scalars['String'];
+  description: Scalars['String'];
+  id: Scalars['ID'];
+  postedBy: User;
+  url: Scalars['String'];
+  votes: Array<Vote>;
 };
 
 export type Query = {
   __typename?: 'Query';
   feed: Feed;
-  link?: Maybe<Link>;
+  post: Post;
+  user: User;
 };
 
 
 export type QueryFeedArgs = {
-  filter: Scalars['String'];
-  skip: Scalars['Int'];
-  take: Scalars['Int'];
+  filter?: Maybe<Scalars['String']>;
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
 };
 
 
-export type QueryLinkArgs = {
+export type QueryPostArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryUserArgs = {
   id: Scalars['ID'];
 };
 
@@ -104,21 +110,22 @@ export enum Sort {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  linkCreated?: Maybe<Link>;
-  linkVoted?: Maybe<Vote>;
+  postCreated: Post;
+  postVoted: Vote;
 };
 
 export type User = {
   __typename?: 'User';
   email: Scalars['String'];
   id: Scalars['ID'];
-  links: Array<Link>;
   name: Scalars['String'];
+  posts: Array<Post>;
+  votes: Array<Vote>;
 };
 
 export type Vote = {
   __typename?: 'Vote';
   id: Scalars['ID'];
-  link: Link;
+  post: Post;
   user: User;
 };

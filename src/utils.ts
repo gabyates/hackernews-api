@@ -1,7 +1,12 @@
 /* Core */
+import { join } from 'path';
+import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
-export const { APP_SECRET } = process.env;
+dotenv.config({ path: join(__dirname, '../.env.development.local') });
+
+/* eslint-disable-next-line prefer-destructuring */
+export const APP_SECRET = process.env.APP_SECRET;
 
 const getTokenPayload = (token: string) => {
     if (!APP_SECRET) {
@@ -32,7 +37,8 @@ export const getUserId = (authHeader: string | null, authToken?: string) => {
         const userId = getTokenPayload(token);
 
         return userId;
-    } else if (authToken) {
+    }
+    if (authToken) {
         const token = authToken.replace('Bearer ', '');
 
         const userId = getTokenPayload(token);

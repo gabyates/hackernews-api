@@ -3,34 +3,48 @@ import { Resolver } from '../types';
 import * as gql from '../graphql';
 
 export const Query: QueryResolvers = {
-    feed: async (_, args, ctx) => {
+    async feed(_, args, ctx) {
         const { filter: contains, skip, take } = args;
 
         const where = contains
             ? { OR: [{ url: { contains } }, { description: { contains } }] }
             : {};
 
-        const links = await ctx.prisma.link.findMany({
+        const posts = await ctx.prisma.post.findMany({
             where,
-            skip,
-            take,
+            skip: skip ?? 0,
+            take: take ?? 20,
         });
 
-        const count = await ctx.prisma.link.count({ where });
+        const count = await ctx.prisma.post.count({ where });
 
-        return { links, count };
+        return { posts, count };
     },
 
-    link: (_, args, ctx) => {
+    async post(_, args, ctx) {
         if (!ctx.userId) {
             throw new Error('Not authenticated.');
         }
 
-        return ctx.prisma.link.findUnique({ where: { id: args.id } });
+        const post = await ctx.prisma.post.findUnique({
+            where: { id: args.id },
+        });
+
+        return post;
+    },
+
+    async user(_, args, ctx) {
+        const user = await ctx.prisma.user.findUnique({
+            where: { id: args.id },
+        });
+
+        return user;
     },
 };
 
+/* Types */
 interface QueryResolvers {
-    feed: Resolver<unknown, gql.QueryFeedArgs>;
-    link: Resolver<unknown, gql.QueryLinkArgs>;
+    feed: Resolver<undefined, gql.QueryFeedArgs>;
+    post: Resolver<undefined, gql.QueryPostArgs>;
+    user: Resolver<undefined, gql.QueryUserArgs>;
 }

@@ -29,12 +29,11 @@
     "devDependencies": {
         "@graphql-codegen/cli": "2.2.0",
         "@graphql-codegen/typescript": "2.2.2",
-        "@graphql-codegen/typescript-operations": "2.1.4",
         "@types/bcryptjs": "2.4.2",
         "@types/jsonwebtoken": "8.5.5",
-        "@types/node": "16.10.1",
+        "@types/node": "16.10.2",
         "eslint": "7.32.0",
-        "eslint-config-dva": "0.0.9",
+        "eslint-config-dva": "0.0.11",
         "typescript": "4.4.3"
     }
 }

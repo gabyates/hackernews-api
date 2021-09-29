@@ -1,12 +1,26 @@
 /* Instruments */
 import { Resolver } from '../types';
+import * as gql from '../graphql';
 
-const link: Resolver<{ id: number }> = (parent, _, ctx) => {
-    return ctx.prisma.vote.findUnique({ where: { id: parent.id } }).link();
+export const Vote: VoteProps = {
+    async post(vote, _, ctx) {
+        const post = await ctx.prisma.vote
+            .findUnique({ where: { id: vote.id } })
+            .post();
+
+        return post;
+    },
+
+    async user(vote, _, ctx) {
+        const user = await ctx.prisma.vote
+            .findUnique({ where: { id: vote.id } })
+            .user();
+        return user;
+    },
 };
 
-const user: Resolver<{ id: number }> = (parent, _, ctx) => {
-    return ctx.prisma.vote.findUnique({ where: { id: parent.id } }).user();
-};
-
-export const Vote = { link, user };
+/* Types */
+interface VoteProps {
+    post: Resolver<gql.Vote>;
+    user: Resolver<gql.Vote>;
+}

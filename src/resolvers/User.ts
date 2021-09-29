@@ -1,17 +1,27 @@
+/* Core */
+import { User as TUser } from '@prisma/client';
+
 /* Instruments */
-import * as gql from '../graphql';
 import { Resolver } from '../types';
 
 export const User: UserResolvers = {
-    links(parent, _, ctx) {
-        const user = ctx.prisma.user
+    async posts(parent, _, ctx) {
+        const posts = await ctx.prisma.user
             .findUnique({ where: { id: parent.id } })
-            .links();
+            .posts();
 
-        return user;
+        return posts;
+    },
+    async votes(parent, _, ctx) {
+        const votes = await ctx.prisma.user
+            .findUnique({ where: { id: parent.id } })
+            .votes();
+
+        return votes;
     },
 };
 
 interface UserResolvers {
-    links: Resolver<gql.User>;
+    posts: Resolver<TUser>;
+    votes: Resolver<TUser>;
 }
