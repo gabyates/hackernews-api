@@ -19,6 +19,9 @@
         "dotenv": "10.0.0",
         "express": "4.17.1",
         "graphql": "15.6.0",
+        "@types/bcryptjs": "2.4.2",
+        "@types/jsonwebtoken": "8.5.5",
+        "@types/node": "16.10.2",
         "graphql-subscriptions": "1.2.1",
         "graphql-ws": "5.5.0",
         "jsonwebtoken": "8.5.1",
@@ -29,9 +32,6 @@
     "devDependencies": {
         "@graphql-codegen/cli": "2.2.0",
         "@graphql-codegen/typescript": "2.2.2",
-        "@types/bcryptjs": "2.4.2",
-        "@types/jsonwebtoken": "8.5.5",
-        "@types/node": "16.10.2",
         "eslint": "7.32.0",
         "eslint-config-dva": "0.0.11",
         "typescript": "4.4.3"
