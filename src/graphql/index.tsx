@@ -82,9 +82,15 @@ export type Post = {
 
 export type Query = {
   __typename?: 'Query';
+  authenticate?: Maybe<Scalars['Boolean']>;
   feed: Feed;
   post: Post;
   user: User;
+};
+
+
+export type QueryAuthenticateArgs = {
+  token: Scalars['String'];
 };
 
 

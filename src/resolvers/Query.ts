@@ -48,6 +48,12 @@ export const Query: QueryResolvers = {
 
         return user;
     },
+
+    async authenticate(_, args, ctx) {
+        console.log(args);
+
+        return true;
+    },
 };
 
 /* Types */
@@ -55,4 +61,5 @@ interface QueryResolvers {
     feed: Resolver<gql.QueryFeedArgs>;
     post: Resolver<gql.QueryPostArgs>;
     user: Resolver<gql.QueryUserArgs>;
+    authenticate: Resolver<gql.QueryAuthenticateArgs>;
 }

@@ -32,7 +32,7 @@
         "@graphql-codegen/cli": "2.2.0",
         "@graphql-codegen/typescript": "2.2.2",
         "eslint": "7.32.0",
-        "eslint-config-dva": "0.0.11",
+        "eslint-config-dva": "0.0.13",
         "typescript": "4.4.3"
     }
 }
