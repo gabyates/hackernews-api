@@ -8,7 +8,7 @@ dotenv.config({ path: join(__dirname, '../.env.development.local') });
 /* eslint-disable-next-line prefer-destructuring */
 export const APP_SECRET = process.env.APP_SECRET;
 
-const getTokenPayload = (token: string) => {
+export const getTokenPayload = (token: string) => {
     if (!APP_SECRET) {
         throw new Error('APP_SECRET variable not found!');
     }

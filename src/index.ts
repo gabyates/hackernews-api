@@ -44,11 +44,11 @@ const pubsub = new PubSub();
 
     const { host, port, protocol } = getUrlParts();
 
-    httpServer.listen({ port, host }, () => {
+    httpServer.listen({ port, host: '0.0.0.0' }, () => {
         const wsServer = new ws.Server({
             server: httpServer,
             path:   apolloServer.graphqlPath,
-            host,
+            host:   '0.0.0.0',
         });
 
         useServer(
@@ -84,7 +84,7 @@ const pubsub = new PubSub();
                         { msg, errors },
                     );
                 },
-                onComplete: (ctx, operation) => {
+                onComplete: (_, operation) => {
                     console.log(
                         chalk.yellow('∞'),
                         chalk.white('Subscription'),
@@ -122,7 +122,9 @@ function getUrlParts() {
         http: isProd ? 'https' : 'http',
         ws:   isProd ? 'wss' : 'ws',
     };
-    const host = isProd ? 'the-hackernews-api.herokuapp.com' : 'localhost';
+    const host = isProd
+        ? 'hackernews-api-production.up.railway.app'
+        : 'localhost';
 
     return { port, protocol, host };
 }

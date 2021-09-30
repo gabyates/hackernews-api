@@ -1,6 +1,7 @@
 /* Instruments */
 import type { Resolver } from '../types';
 import type * as gql from '../graphql';
+import { getTokenPayload } from '../utils';
 
 export const Query: QueryResolvers = {
     async feed(_, args, ctx) {
@@ -49,10 +50,18 @@ export const Query: QueryResolvers = {
         return user;
     },
 
-    async authenticate(_, args, ctx) {
-        console.log(args);
+    async authenticate(_, args, ctx, i) {
+        const id = getTokenPayload(args.token);
 
-        return true;
+        if (id) {
+            const user = await ctx.prisma.user.findUnique({ where: { id } });
+
+            if (user) {
+                return true;
+            }
+        }
+
+        return false;
     },
 };
 
