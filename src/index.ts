@@ -2,12 +2,11 @@
 import { join } from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
-import { execute, subscribe } from 'graphql';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { PrismaClient } from '@prisma/client';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
+import ws from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { PubSub } from 'graphql-subscriptions';
 import chalk from 'chalk';
 
@@ -37,59 +36,93 @@ const pubsub = new PubSub();
                 userId: getUserId(req.headers.authorization),
             };
         },
-        plugins: [
-            ApolloServerPluginDrainHttpServer({ httpServer }),
-            {
-                async serverWillStart() {
-                    return {
-                        async drainServer() {
-                            subscriptionServer.close();
-                        },
-                    };
-                },
-            },
-        ],
     });
 
     await apolloServer.start();
 
     apolloServer.applyMiddleware({ app });
 
-    const subscriptionServer = SubscriptionServer.create(
-        {
-            schema,
-            execute,
-            subscribe,
-            onConnect(connectionParams: { Authorization: string }) {
-                const subscriptionsCtx = {
-                    pubsub,
-                    prisma,
-                    userId: getUserId(null, connectionParams.Authorization),
-                };
+    const { host, port, protocol } = getUrlParts();
 
-                return subscriptionsCtx;
+    httpServer.listen({ port, host }, () => {
+        const wsServer = new ws.Server({
+            server: httpServer,
+            path:   apolloServer.graphqlPath,
+            host,
+        });
+
+        useServer(
+            {
+                schema,
+                context(ctx) {
+                    const userId = getUserId(
+                        ctx.connectionParams?.Authorization as string,
+                    );
+
+                    const subCtx = { pubsub, prisma, userId };
+
+                    return subCtx;
+                },
+                onConnect: () => {
+                    console.log(
+                        chalk.yellow('∞'),
+                        chalk.white('Subscription server'),
+                        `${chalk.greenBright('connected')}`,
+                    );
+                },
+                onSubscribe: (_, msg) => {
+                    console.log(
+                        chalk.yellow('∞'),
+                        chalk.white('Subscribed to'),
+                        `${chalk.redBright(msg.payload.operationName)}`,
+                    );
+                },
+                onError: (_, msg, errors) => {
+                    console.error(
+                        chalk.yellow('∞'),
+                        chalk.red('Subscription Error'),
+                        { msg, errors },
+                    );
+                },
+                onComplete: (ctx, operation) => {
+                    console.log(
+                        chalk.yellow('∞'),
+                        chalk.white('Subscription'),
+                        chalk.blueBright(operation.id),
+                        chalk.greenBright(operation.type),
+                    );
+                },
             },
-        },
-        { server: httpServer, path: apolloServer.graphqlPath },
-    );
+            wsServer,
+        );
 
-    /* eslint-disable-next-line prefer-destructuring */
-    const PORT = process.env.PORT;
-
-    await new Promise<void>(resolve => httpServer.listen({ port: PORT }, resolve));
-
-    console.log(
-        chalk.cyanBright(
-            `🚀 Server ready at ${chalk.blueBright(
-                `http://localhost:${PORT}${apolloServer.graphqlPath}`,
-            )}`,
-        ),
-    );
-    console.log(
-        chalk.cyanBright(
-            `📲 Subscription endpoint ready at ${chalk.blueBright(
-                `ws://localhost:${PORT}${apolloServer.graphqlPath}`,
-            )}`,
-        ),
-    );
+        console.log(
+            chalk.cyanBright(
+                `🚀 HTTP server ready at ${chalk.blueBright(
+                    `${protocol.http}://${host}:${port}${apolloServer.graphqlPath}`,
+                )}`,
+            ),
+        );
+        console.log(
+            chalk.cyanBright(
+                `📲 Subscription server ready at ${chalk.blueBright(
+                    `${protocol.ws}://${host}:${port}${apolloServer.graphqlPath}`,
+                )}`,
+            ),
+        );
+    });
 })();
+
+/* Helpers */
+function getUrlParts() {
+    /* eslint-disable-next-line prefer-destructuring */
+    const port = Number(process.env.PORT);
+    const isProd = process.env.NODE_ENV === 'production';
+    const protocol = {
+        http: isProd ? 'https' : 'http',
+        ws:   isProd ? 'wss' : 'ws',
+    };
+    const host = isProd ? 'the-hackernews-api.herokuapp.com' : 'localhost';
+
+    return { port, protocol, host };
+}

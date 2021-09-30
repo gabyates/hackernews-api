@@ -20,26 +20,20 @@ const getTokenPayload = (token: string) => {
 
         userId = jwtPayload.userId;
     } catch (error) {
-        console.log(error);
+        // @ts-ignore
+        console.log('JWT ERROR:', error.message);
     }
 
     return userId;
 };
 
-export const getUserId = (authHeader: string | null, authToken?: string) => {
+export const getUserId = (authHeader: string | null) => {
     if (authHeader) {
         const token = authHeader.replace('Bearer ', '');
 
         if (!token) {
             throw new Error('No token found');
         }
-
-        const userId = getTokenPayload(token);
-
-        return userId;
-    }
-    if (authToken) {
-        const token = authToken.replace('Bearer ', '');
 
         const userId = getTokenPayload(token);
 

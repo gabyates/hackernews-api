@@ -1,15 +1,20 @@
 /* Core */
 import type { Post as PrismaPost, Vote as PrismaVote } from '@prisma/client';
+import chalk from 'chalk';
 
 /* Instruments */
 import { Resolver, EVENT } from '../types';
 
 export const Subscription: SubscriptionResolvers = {
     postCreated: {
-        subscribe(_, __, ctx) {
+        subscribe(_, __, ctx, info) {
+            logOperation(info.fieldName, 'subscribe');
+
             return ctx.pubsub.asyncIterator([ EVENT.POST_CREATED ]);
         },
-        async resolve(post, _, ctx) {
+        async resolve(post, _, ctx, info) {
+            logOperation(info.fieldName, 'resolve');
+
             const postedBy = await ctx.prisma.post
                 .findUnique({ where: { id: post.id } })
                 .postedBy();
@@ -25,10 +30,14 @@ export const Subscription: SubscriptionResolvers = {
         },
     },
     postVoted: {
-        subscribe(_, __, ctx) {
+        subscribe(_, __, ctx, info) {
+            logOperation(info.fieldName, 'subscribe');
+
             return ctx.pubsub.asyncIterator([ EVENT.POST_VOTED ]);
         },
-        async resolve(vote, __, ctx) {
+        async resolve(vote, __, ctx, info) {
+            logOperation(info.fieldName, 'resolve');
+
             const [ post, user ] = await Promise.all([
                 ctx.prisma.post.findUnique({
                     where: { id: vote.postId },
@@ -50,6 +59,22 @@ export const Subscription: SubscriptionResolvers = {
         },
     },
 };
+
+/* Helpers */
+function logOperation(
+    fieldName: string,
+    operationType: 'subscribe' | 'resolve',
+) {
+    const message = operationType === 'subscribe'
+        ? 'subscriber is ready to resolve'
+        : 'resolver triggered';
+
+    console.log(
+        chalk.yellow('∞'),
+        chalk.redBright(fieldName),
+        chalk.white(message),
+    );
+}
 
 /* Types */
 type Subscriber<TArgs, TParent = Record<string, any>> = {
