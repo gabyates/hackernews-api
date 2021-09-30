@@ -1,6 +1,6 @@
 /* Instruments */
-import { Resolver } from '../types';
-import * as gql from '../graphql';
+import type { Resolver } from '../types';
+import type * as gql from '../graphql';
 
 export const Query: QueryResolvers = {
     async feed(_, args, ctx) {
@@ -30,6 +30,10 @@ export const Query: QueryResolvers = {
             where: { id: args.id },
         });
 
+        if (post === null) {
+            throw new Error('Post was not found.');
+        }
+
         return post;
     },
 
@@ -38,13 +42,17 @@ export const Query: QueryResolvers = {
             where: { id: args.id },
         });
 
+        if (user === null) {
+            throw new Error('User was not found.');
+        }
+
         return user;
     },
 };
 
 /* Types */
 interface QueryResolvers {
-    feed: Resolver<undefined, gql.QueryFeedArgs>;
-    post: Resolver<undefined, gql.QueryPostArgs>;
-    user: Resolver<undefined, gql.QueryUserArgs>;
+    feed: Resolver<gql.QueryFeedArgs>;
+    post: Resolver<gql.QueryPostArgs>;
+    user: Resolver<gql.QueryUserArgs>;
 }

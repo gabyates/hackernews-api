@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 /* Instruments */
 import { Resolver, EVENT } from '../types';
-import * as gql from '../graphql';
+import type * as gql from '../graphql';
 import { APP_SECRET } from '../utils';
 
 export const Mutation: MutationResolvers = {
@@ -140,10 +140,10 @@ export const Mutation: MutationResolvers = {
 
 /* Types */
 interface MutationResolvers {
-    signup: Resolver<undefined, gql.MutationSignupArgs>;
-    login: Resolver<undefined, gql.MutationLoginArgs>;
-    createPost: Resolver<undefined, gql.MutationCreatePostArgs>;
-    updatePost: Resolver<undefined, gql.MutationUpdatePostArgs>;
-    deletePost: Resolver<undefined, gql.MutationDeletePostArgs>;
-    vote: Resolver<undefined, gql.MutationVoteArgs>;
+    signup: Resolver<gql.MutationSignupArgs>;
+    login: Resolver<gql.MutationLoginArgs>;
+    createPost: Resolver<gql.MutationCreatePostArgs>;
+    updatePost: Resolver<gql.MutationUpdatePostArgs>;
+    deletePost: Resolver<gql.MutationDeletePostArgs>;
+    vote: Resolver<gql.MutationVoteArgs>;
 }

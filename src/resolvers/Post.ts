@@ -1,19 +1,25 @@
+/* Core */
+import type { Post as PrismaPost } from '@prisma/client';
+
 /* Instruments */
-import { Resolver } from '../types';
-import * as gql from '../graphql';
+import type { Resolver } from '../types';
 
 export const Post: PostResolvers = {
-    postedBy(parent, _, ctx) {
-        const postedBy = ctx.prisma.post
-            .findUnique({ where: { id: parent.id } })
+    async postedBy(post, _, ctx) {
+        const postedBy = await ctx.prisma.post
+            .findUnique({ where: { id: post.id } })
             .postedBy();
+
+        if (postedBy === null) {
+            throw new Error(`User that posted post ${post.id} was not found.`);
+        }
 
         return postedBy;
     },
 
-    votes(parent, _, ctx) {
-        const votes = ctx.prisma.post
-            .findUnique({ where: { id: parent.id } })
+    async votes(post, _, ctx) {
+        const votes = await ctx.prisma.post
+            .findUnique({ where: { id: post.id } })
             .votes();
 
         return votes;
@@ -22,6 +28,6 @@ export const Post: PostResolvers = {
 
 /* Types */
 interface PostResolvers {
-    postedBy: Resolver<gql.Post>;
-    votes: Resolver<gql.Post>;
+    postedBy: Resolver<unknown, PrismaPost>;
+    votes: Resolver<unknown, PrismaPost>;
 }

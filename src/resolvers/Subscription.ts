@@ -1,5 +1,5 @@
 /* Core */
-import { Post, Vote } from '@prisma/client';
+import type { Post as PrismaPost, Vote as PrismaVote } from '@prisma/client';
 
 /* Instruments */
 import { Resolver, EVENT } from '../types';
@@ -14,6 +14,10 @@ export const Subscription: SubscriptionResolvers = {
                 .findUnique({ where: { id: post.id } })
                 .postedBy();
 
+            if (postedBy === null) {
+                throw new Error('User for a created post was not found.');
+            }
+
             return {
                 ...post,
                 postedBy,
@@ -24,18 +28,22 @@ export const Subscription: SubscriptionResolvers = {
         subscribe(_, __, ctx) {
             return ctx.pubsub.asyncIterator([ EVENT.POST_VOTED ]);
         },
-        async resolve(parent, __, ctx) {
+        async resolve(vote, __, ctx) {
             const [ post, user ] = await Promise.all([
                 ctx.prisma.post.findUnique({
-                    where: { id: parent.postId },
+                    where: { id: vote.postId },
                 }),
                 ctx.prisma.user.findUnique({
-                    where: { id: parent.userId },
+                    where: { id: vote.userId },
                 }),
             ]);
 
+            if (post === null || user === null) {
+                throw new Error('Post or User for Vote was not found.');
+            }
+
             return {
-                id: parent.id,
+                id: vote.id,
                 post,
                 user,
             };
@@ -44,12 +52,12 @@ export const Subscription: SubscriptionResolvers = {
 };
 
 /* Types */
-type Subscriber<TParent = Record<string, any>> = {
+type Subscriber<TArgs, TParent = Record<string, any>> = {
     subscribe: Resolver;
-    resolve: Resolver<TParent>;
+    resolve: Resolver<TArgs, TParent>;
 };
 
 interface SubscriptionResolvers {
-    postCreated: Subscriber<Post>;
-    postVoted: Subscriber<Vote>;
+    postCreated: Subscriber<unknown, PrismaPost>;
+    postVoted: Subscriber<unknown, PrismaVote>;
 }

@@ -5,8 +5,8 @@ import type { PrismaClient } from '@prisma/client';
 import type { Request, Response } from 'express';
 
 export type Resolver<
-    TSource = undefined,
     TArgs = { [argName: string]: any },
+    TSource = undefined,
 > = GraphQLFieldResolver<TSource, ResolverCtx, TArgs>;
 
 export interface ResolverCtx {

@@ -1,6 +1,8 @@
+/* Core */
+import type { Vote as PrismaVote } from '@prisma/client';
+
 /* Instruments */
-import { Resolver } from '../types';
-import * as gql from '../graphql';
+import type { Resolver } from '../types';
 
 export const Vote: VoteProps = {
     async post(vote, _, ctx) {
@@ -21,6 +23,6 @@ export const Vote: VoteProps = {
 
 /* Types */
 interface VoteProps {
-    post: Resolver<gql.Vote>;
-    user: Resolver<gql.Vote>;
+    post: Resolver<unknown, PrismaVote>;
+    user: Resolver<unknown, PrismaVote>;
 }

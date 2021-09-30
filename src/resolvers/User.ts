@@ -1,8 +1,8 @@
 /* Core */
-import { User as TUser } from '@prisma/client';
+import type { User as PrismaUser } from '@prisma/client';
 
 /* Instruments */
-import { Resolver } from '../types';
+import type { Resolver } from '../types';
 
 export const User: UserResolvers = {
     async posts(parent, _, ctx) {
@@ -22,6 +22,6 @@ export const User: UserResolvers = {
 };
 
 interface UserResolvers {
-    posts: Resolver<TUser>;
-    votes: Resolver<TUser>;
+    posts: Resolver<unknown, PrismaUser>;
+    votes: Resolver<unknown, PrismaUser>;
 }

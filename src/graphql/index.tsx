@@ -9,6 +9,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
 };
 
 export type AuthPayload = {
@@ -30,7 +31,7 @@ export type Mutation = {
   login?: Maybe<AuthPayload>;
   signup?: Maybe<AuthPayload>;
   updatePost: Post;
-  vote?: Maybe<Vote>;
+  vote: Vote;
 };
 
 
@@ -71,7 +72,7 @@ export type MutationVoteArgs = {
 
 export type Post = {
   __typename?: 'Post';
-  createdAt: Scalars['String'];
+  createdAt: Scalars['Date'];
   description: Scalars['String'];
   id: Scalars['ID'];
   postedBy: User;
