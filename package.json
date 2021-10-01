@@ -7,6 +7,9 @@
         "start": "ts-node-dev --rs src",
         "codegen:graphql": "graphql-codegen --config \"./graphql-codegen.yml\""
     },
+    "prisma": {
+        "seed": "ts-node-dev prisma/seed"
+    },
     "dependencies": {
         "@graphql-tools/graphql-file-loader": "7.1.0",
         "@graphql-tools/load": "7.3.2",
