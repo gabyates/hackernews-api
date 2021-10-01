@@ -136,6 +136,8 @@ export const Mutation: MutationResolvers = {
             throw new Error(`Already voted for link: ${args.postId}`);
         }
 
+        console.log(userId);
+
         const newVote = ctx.prisma.vote.create({
             data: {
                 user: { connect: { id: userId } },
