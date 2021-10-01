@@ -1,18 +1,13 @@
 /* Core */
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 /* Instruments */
 import { Resolver, EVENT } from '../types';
 import type * as gql from '../graphql';
-import { APP_SECRET } from '../utils';
+import { encodeJWTPayload } from '../utils';
 
 export const Mutation: MutationResolvers = {
     async signup(_, args, ctx) {
-        if (!APP_SECRET) {
-            throw new Error('APP_SECRET variable not found!');
-        }
-
         const password = await bcrypt.hash(args.password, 10);
 
         const isEmailInUse = await ctx.prisma.user.findUnique({
@@ -27,7 +22,13 @@ export const Mutation: MutationResolvers = {
             data: { ...args, password },
         });
 
-        const token = jwt.sign({ userId: user.id }, APP_SECRET);
+        const jwtPayload = {
+            userId:   user.id,
+            email:    args.email,
+            password: args.password,
+        };
+
+        const token = encodeJWTPayload(jwtPayload);
 
         return {
             token,
@@ -36,35 +37,37 @@ export const Mutation: MutationResolvers = {
     },
 
     async login(_, args, ctx) {
-        if (!APP_SECRET) {
-            throw new Error('APP_SECRET variable not found!');
-        }
-
         const user = await ctx.prisma.user.findUnique({
             where: { email: args.email },
         });
 
         if (!user) {
-            throw new Error('No such user found.');
+            throw new Error('Wrong email or password.');
         }
 
-        const isValid = await bcrypt.compare(args.password, user.password);
+        const isPasswordValid = await bcrypt.compare(
+            args.password,
+            user.password,
+        );
 
-        if (!isValid) {
-            throw new Error('Invalid password');
+        if (!isPasswordValid) {
+            throw new Error('Wrong email or password.');
         }
 
-        const token = jwt.sign({ userId: user.id }, APP_SECRET);
-
-        return {
-            token,
-            user,
+        const jwtPayload = {
+            userId:   user.id,
+            email:    args.email,
+            password: args.password,
         };
+
+        const token = encodeJWTPayload(jwtPayload);
+
+        return { token, user };
     },
 
     async createPost(_, args, ctx) {
-        if (!ctx.userId) {
-            throw new Error('User is not authenticated.');
+        if (!ctx.currentUser) {
+            throw new Error('Not authenticated.');
         }
 
         const newPost = await ctx.prisma.post.create({
@@ -73,7 +76,7 @@ export const Mutation: MutationResolvers = {
                 description: args.description,
                 postedBy:    {
                     connect: {
-                        id: ctx.userId,
+                        id: ctx.currentUser.userId,
                     },
                 },
             },
@@ -85,6 +88,10 @@ export const Mutation: MutationResolvers = {
     },
 
     async updatePost(_, args, ctx) {
+        if (!ctx.currentUser) {
+            throw new Error('Not authenticated.');
+        }
+
         const updatedPost = await ctx.prisma.post.update({
             where: { id: args.id },
             data:  {
@@ -97,6 +104,10 @@ export const Mutation: MutationResolvers = {
     },
 
     async deletePost(_, args, ctx) {
+        if (!ctx.currentUser) {
+            throw new Error('Not authenticated.');
+        }
+
         await ctx.prisma.post.delete({
             where: { id: args.id },
         });
@@ -105,12 +116,12 @@ export const Mutation: MutationResolvers = {
     },
 
     async vote(_, args, ctx) {
-        const { userId } = ctx;
-        const { postId } = args;
-
-        if (!userId) {
-            throw new Error('User not found');
+        if (!ctx.currentUser) {
+            throw new Error('Not authenticated.');
         }
+
+        const { postId } = args;
+        const { userId } = ctx.currentUser;
 
         const isAlreadyVoted = await ctx.prisma.vote.findUnique({
             where: {

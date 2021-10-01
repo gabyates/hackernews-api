@@ -1,7 +1,7 @@
 /* Instruments */
 import type { Resolver } from '../types';
 import type * as gql from '../graphql';
-import { getTokenPayload } from '../utils';
+import { decodeJWTPayload } from '../utils';
 
 export const Query: QueryResolvers = {
     async feed(_, args, ctx) {
@@ -23,10 +23,6 @@ export const Query: QueryResolvers = {
     },
 
     async post(_, args, ctx) {
-        if (!ctx.userId) {
-            throw new Error('Not authenticated.');
-        }
-
         const post = await ctx.prisma.post.findUnique({
             where: { id: args.id },
         });
@@ -50,11 +46,13 @@ export const Query: QueryResolvers = {
         return user;
     },
 
-    async authenticate(_, args, ctx, i) {
-        const id = getTokenPayload(args.token);
+    async authenticate(_, args, ctx) {
+        const jwtPayload = decodeJWTPayload(args.token);
 
-        if (id) {
-            const user = await ctx.prisma.user.findUnique({ where: { id } });
+        if (jwtPayload) {
+            const user = await ctx.prisma.user.findUnique({
+                where: { id: jwtPayload.userId },
+            });
 
             if (user) {
                 return true;

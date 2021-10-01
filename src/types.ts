@@ -11,7 +11,7 @@ export type Resolver<
 
 export interface ResolverCtx {
     req: Request;
-    userId: string | null;
+    currentUser: JWTPayload | null;
     prisma: PrismaClient;
     pubsub: PubSub;
 }
@@ -26,4 +26,10 @@ export interface ExpressCtx {
 export enum EVENT {
     POST_CREATED = 'POST_CREATED',
     POST_VOTED = 'POST_VOTED',
+}
+
+export interface JWTPayload {
+    userId: string;
+    email: string;
+    password: string;
 }
