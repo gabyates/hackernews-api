@@ -12,7 +12,7 @@ import chalk from 'chalk';
 
 /* Instruments */
 import { ExpressCtx } from './types';
-import { getUserId } from './utils';
+import { decodeJWTPayload } from './utils';
 import { schema } from './graphql/schema';
 
 dotenv.config({ path: join(__dirname, '../.env.development.local') });
@@ -29,11 +29,22 @@ const pubsub = new PubSub();
         context: (expressCtx: ExpressCtx) => {
             const { req } = expressCtx;
 
+            console.log(
+                chalk.blueBright(
+                    'Root CTX, operation name:',
+                    chalk.redBright(expressCtx.req.body?.operationName),
+                ),
+            );
+            const currentUser = decodeJWTPayload(
+                req.headers.authorization,
+                expressCtx.req.body?.operationName,
+            );
+
             return {
                 req,
                 pubsub,
                 prisma,
-                userId: getUserId(req.headers.authorization),
+                currentUser,
             };
         },
     });
@@ -55,11 +66,11 @@ const pubsub = new PubSub();
             {
                 schema,
                 context(ctx) {
-                    const userId = getUserId(
+                    const currentUser = decodeJWTPayload(
                         ctx.connectionParams?.Authorization as string,
                     );
 
-                    const subCtx = { pubsub, prisma, userId };
+                    const subCtx = { pubsub, prisma, currentUser };
 
                     return subCtx;
                 },

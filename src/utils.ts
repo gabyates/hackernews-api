@@ -2,43 +2,56 @@
 import { join } from 'path';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import chalk from 'chalk';
+
+/* Instruments */
+import { JWTPayload } from './types';
 
 dotenv.config({ path: join(__dirname, '../.env.development.local') });
 
 /* eslint-disable-next-line prefer-destructuring */
-export const APP_SECRET = process.env.APP_SECRET;
+export const JWT_SECRET = process.env.JWT_SECRET;
 
-export const getTokenPayload = (token: string) => {
-    if (!APP_SECRET) {
-        throw new Error('APP_SECRET variable not found!');
+export const decodeJWTPayload = (
+    authHeader: string,
+    operationName?: string,
+): JWTPayload | null => {
+    if (!JWT_SECRET) {
+        throw new Error('JWT_SECRET env variable not found!');
     }
 
-    let userId = null;
+    const token = authHeader.replace('Bearer ', '');
 
-    try {
-        const jwtPayload = jwt.verify(token, APP_SECRET) as { userId: string };
+    if (!token) {
+        const operation = operationName?.toLowerCase();
 
-        userId = jwtPayload.userId;
-    } catch (error) {
-        // @ts-ignore
-        console.log('JWT ERROR:', error.message);
-    }
-
-    return userId;
-};
-
-export const getUserId = (authHeader: string | null) => {
-    if (authHeader) {
-        const token = authHeader.replace('Bearer ', '');
-
-        if (!token) {
-            throw new Error('No token found');
+        if (operation !== 'login' && operation !== 'signup') {
+            console.log(
+                chalk.red('No token found in authorization header.', token),
+            );
         }
 
-        const userId = getTokenPayload(token);
+        return null;
+    }
 
-        return userId;
+    try {
+        const jwtPayload = jwt.verify(token, JWT_SECRET) as JWTPayload;
+
+        return jwtPayload;
+    } catch (error) {
+        // @ts-ignore
+        console.log(chalk.red('JWT verification error:'), error.message);
     }
 
     return null;
+};
+
+export const encodeJWTPayload = (jwtPayload: JWTPayload): string => {
+    if (!JWT_SECRET) {
+        throw new Error('JWT_SECRET env variable not found!');
+    }
+
+    const token = jwt.sign(jwtPayload, JWT_SECRET);
+
+    return token;
 };
