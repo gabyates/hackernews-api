@@ -1,4 +1,4 @@
-# The Hackernews API
+# Hackernews API
 
 Built with the following technology stack:
 

@@ -15,16 +15,16 @@ model Post {
   createdAt   DateTime @default(now())
   description String
   url         String
-  postedBy    User?    @relation(fields: [postedById], references: [id])
-  postedById  String?
+  postedBy    User    @relation(fields: [postedById], references: [id])
+  postedById  String
   votes       Vote[]
 }
 
 model User {
   id       String @id @default(uuid())
-  name     String
   email    String @unique
   password String
+  name     String
   posts    Post[]
   votes    Vote[]
 }
