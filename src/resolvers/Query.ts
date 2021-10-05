@@ -11,8 +11,6 @@ export const Query: QueryResolvers = {
             ? { OR: [{ url: { contains } }, { description: { contains } }] }
             : {};
 
-        console.log(args.orderBy);
-
         const orderBy: unknown[] = [
             {
                 createdAt:

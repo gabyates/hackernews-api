@@ -8,7 +8,6 @@ import { encodeJWTPayload, validateAuthPayload } from '../utils';
 
 export const Mutation: MutationResolvers = {
     async signup(_, args, ctx) {
-        console.log('signup payload', args);
         await validateAuthPayload('signup', args);
 
         const password = await bcrypt.hash(args.password, 10);
@@ -40,7 +39,6 @@ export const Mutation: MutationResolvers = {
     },
 
     async login(_, args, ctx) {
-        console.log('login payload', args);
         await validateAuthPayload('login', args);
 
         const user = await ctx.prisma.user.findUnique({
@@ -143,8 +141,6 @@ export const Mutation: MutationResolvers = {
                 post: { connect: { id: args.postId } },
             },
         });
-
-        console.log(newVote);
 
         ctx.pubsub.publish(EVENT.POST_VOTED, newVote);
 
