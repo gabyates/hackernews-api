@@ -34,7 +34,7 @@ export const Query: QueryResolvers = {
         const posts = await ctx.prisma.post.findMany({
             where,
             skip: skip ?? 0,
-            take: take ?? 20,
+            take: take ?? 25,
             // @ts-ignore
             orderBy,
         });

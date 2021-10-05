@@ -2,7 +2,7 @@
 import * as yup from 'yup';
 
 /* Instruments */
-import type * as gql from '../graphql';
+import type * as gql from '../../graphql';
 
 export const createSchema = (mode: Mode) => {
     const loginShape = {
@@ -39,14 +39,11 @@ export const createSchema = (mode: Mode) => {
     return signup;
 };
 
-export const validateAuthPayload = async (
-    mode: Mode,
-    input: gql.MutationSignupArgs | gql.MutationLoginArgs,
-) => {
+export const validateAuth = async (mode: Mode, payload: Payload) => {
     const schema = createSchema(mode);
 
     try {
-        await schema.validate(input);
+        await schema.validate(payload);
     } catch (error: any) {
         throw new Error(error.message);
     }
@@ -54,3 +51,4 @@ export const validateAuthPayload = async (
 
 /* Types */
 type Mode = 'login' | 'signup';
+type Payload = gql.MutationSignupArgs | gql.MutationLoginArgs;
