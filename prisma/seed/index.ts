@@ -28,6 +28,24 @@ async function main() {
         },
     });
 
+    // the newest and top-voted post
+    await prisma.post.create({
+        data: {
+            url:         faker.internet.url(),
+            description: faker.hacker.phrase(),
+            postedById:  dima.id,
+            votes:       {
+                create: [
+                    { userId: dima.id },
+                    { userId: lauren.id },
+                    { userId: emmanuelle.id },
+                    { userId: jack.id },
+                    { userId: adam.id },
+                ],
+            },
+        },
+    });
+
     const posts = await Promise.all(
         [ ...Array(205).keys() ].map(() => prisma.post.create({
             data: {

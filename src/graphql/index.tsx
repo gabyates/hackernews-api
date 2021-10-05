@@ -76,6 +76,16 @@ export type MutationVoteArgs = {
   postId: Scalars['ID'];
 };
 
+export enum Order_By_Enum {
+  Asc = 'asc',
+  Desc = 'desc'
+}
+
+export type OrderByInput = {
+  createdAt?: Maybe<Order_By_Enum>;
+  voteCount?: Maybe<Order_By_Enum>;
+};
+
 export type Post = {
   __typename?: 'Post';
   createdAt: Scalars['Date'];
@@ -103,6 +113,7 @@ export type QueryAuthenticateArgs = {
 
 export type QueryFeedArgs = {
   filter?: Maybe<Scalars['String']>;
+  orderBy?: Maybe<OrderByInput>;
   skip?: Maybe<Scalars['Int']>;
   take?: Maybe<Scalars['Int']>;
 };
@@ -116,11 +127,6 @@ export type QueryPostArgs = {
 export type QueryUserArgs = {
   id: Scalars['ID'];
 };
-
-export enum Sort {
-  Asc = 'asc',
-  Desc = 'desc'
-}
 
 export type Subscription = {
   __typename?: 'Subscription';

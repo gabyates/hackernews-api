@@ -1,6 +1,6 @@
 /* Instruments */
 import type { Resolver } from '../types';
-import type * as gql from '../graphql';
+import * as gql from '../graphql';
 import { decodeJWTPayload } from '../utils';
 
 export const Query: QueryResolvers = {
@@ -11,10 +11,34 @@ export const Query: QueryResolvers = {
             ? { OR: [{ url: { contains } }, { description: { contains } }] }
             : {};
 
+        console.log(args.orderBy);
+
+        const orderBy: unknown[] = [
+            {
+                createdAt:
+                    args.orderBy?.createdAt === gql.Order_By_Enum.Asc
+                        ? 'asc'
+                        : 'desc',
+            },
+        ];
+
+        if (args.orderBy?.voteCount) {
+            orderBy.unshift({
+                votes: {
+                    _count:
+                        args.orderBy?.voteCount === gql.Order_By_Enum.Asc
+                            ? 'asc'
+                            : 'desc',
+                },
+            });
+        }
+
         const posts = await ctx.prisma.post.findMany({
             where,
             skip: skip ?? 0,
             take: take ?? 20,
+            // @ts-ignore
+            orderBy,
         });
 
         const count = await ctx.prisma.post.count({ where });
