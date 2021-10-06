@@ -32,6 +32,7 @@ export type Mutation = {
   signup?: Maybe<AuthPayload>;
   unVote: Vote;
   updatePost: Post;
+  updateUser: User;
   vote: Vote;
 };
 
@@ -69,6 +70,14 @@ export type MutationUpdatePostArgs = {
   description: Scalars['String'];
   id: Scalars['ID'];
   url: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  bio?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
 };
 
 
@@ -136,6 +145,7 @@ export type Subscription = {
 
 export type User = {
   __typename?: 'User';
+  bio?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];

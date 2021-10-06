@@ -4,12 +4,18 @@ import * as yup from 'yup';
 /* Instruments */
 import type * as gql from '../../graphql';
 
+export const userNameValidationRule = yup
+    .string()
+    .min(4, 'Name is ${min} characters minimum.')
+    .required('Required.');
+export const userEmailValidationRule = yup
+    .string()
+    .email('Email should be a valid email.')
+    .required('Email is required.');
+
 export const createSchema = (mode: Mode) => {
     const loginShape = {
-        email: yup
-            .string()
-            .email('Email should be a valid email.')
-            .required('Email is required.'),
+        email:    userEmailValidationRule,
         password: yup
             .string()
             .min(4, 'Password is ${min} characters minimum.')
@@ -18,10 +24,7 @@ export const createSchema = (mode: Mode) => {
 
     const signupShape = {
         ...loginShape,
-        name: yup
-            .string()
-            .min(4, 'Name is ${min} characters minimum.')
-            .required('Required.'),
+        name: userNameValidationRule,
     };
 
     if (mode === 'login') {

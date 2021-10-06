@@ -4,11 +4,11 @@ import bcrypt from 'bcryptjs';
 /* Instruments */
 import { Resolver, EVENT } from '../types';
 import type * as gql from '../graphql';
-import { encodeJWTPayload, validateAuth, validateCreatePost } from '../utils';
+import * as utils from '../utils';
 
 export const Mutation: MutationResolvers = {
     async signup(_, args, ctx) {
-        await validateAuth('signup', args);
+        await utils.validateAuth('signup', args);
 
         const password = await bcrypt.hash(args.password, 10);
 
@@ -30,7 +30,7 @@ export const Mutation: MutationResolvers = {
             password: args.password,
         };
 
-        const token = encodeJWTPayload(jwtPayload);
+        const token = utils.encodeJWTPayload(jwtPayload);
 
         return {
             token,
@@ -39,7 +39,7 @@ export const Mutation: MutationResolvers = {
     },
 
     async login(_, args, ctx) {
-        await validateAuth('login', args);
+        await utils.validateAuth('login', args);
 
         const user = await ctx.prisma.user.findUnique({
             where: { email: args.email },
@@ -64,13 +64,30 @@ export const Mutation: MutationResolvers = {
             password: args.password,
         };
 
-        const token = encodeJWTPayload(jwtPayload);
+        const token = utils.encodeJWTPayload(jwtPayload);
 
         return { token, user };
     },
 
+    async updateUser(_, args, ctx) {
+        await utils.validateUpdateUser(args);
+
+        const userToUpdate = await ctx.prisma.user.findFirst({
+            where: { id: args.id },
+        });
+        const name = args.name ?? userToUpdate?.name;
+        const email = args.email ?? userToUpdate?.email;
+
+        const user = await ctx.prisma.user.update({
+            where: { id: args.id },
+            data:  { name, email, bio: args.bio },
+        });
+
+        return user;
+    },
+
     async createPost(_, args, ctx) {
-        await validateCreatePost(args);
+        await utils.validateCreatePost(args);
 
         if (!ctx.currentUser) {
             throw new Error('Not authenticated.');
@@ -180,6 +197,7 @@ export const Mutation: MutationResolvers = {
 interface MutationResolvers {
     signup: Resolver<gql.MutationSignupArgs>;
     login: Resolver<gql.MutationLoginArgs>;
+    updateUser: Resolver<gql.MutationUpdateUserArgs>;
     createPost: Resolver<gql.MutationCreatePostArgs>;
     updatePost: Resolver<gql.MutationUpdatePostArgs>;
     deletePost: Resolver<gql.MutationDeletePostArgs>;

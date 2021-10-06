@@ -11,6 +11,8 @@ type Mutation {
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
 
+    updateUser(id: ID!, name: String, email: String, bio: String): User!
+
     createPost(url: String!, description: String!): Post!
     updatePost(id: ID!, url: String!, description: String!): Post!
     deletePost(id: ID!): Boolean!
@@ -33,6 +35,7 @@ type User {
     id: ID!
     name: String!
     email: String!
+    bio: String
     posts: [Post!]!
     votes: [Vote!]!
 }

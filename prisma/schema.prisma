@@ -25,6 +25,7 @@ model User {
   email       String  @unique
   password    String
   name        String
+  bio         String?
   posts       Post[]
   votes       Vote[]
   isVotedByMe Boolean @default(false)
