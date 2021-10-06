@@ -4,7 +4,7 @@ type Query {
     feed(filter: String, skip: Int, take: Int, orderBy: OrderByInput): Feed!
     post(id: ID!): Post!
     user(id: ID!): User!
-    authenticate(token: String!): Boolean
+    authenticate(token: String!): User
 }
 
 type Mutation {

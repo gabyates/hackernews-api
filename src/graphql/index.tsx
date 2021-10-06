@@ -99,7 +99,7 @@ export type Post = {
 
 export type Query = {
   __typename?: 'Query';
-  authenticate?: Maybe<Scalars['Boolean']>;
+  authenticate?: Maybe<User>;
   feed: Feed;
   post: Post;
   user: User;
