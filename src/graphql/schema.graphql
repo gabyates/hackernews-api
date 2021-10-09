@@ -3,6 +3,7 @@ scalar Date
 type Query {
     feed(filter: String, skip: Int, take: Int, orderBy: OrderByInput): Feed!
     post(id: ID!): Post!
+    users: [User!]!
     user(id: ID!): User!
     authenticate(token: String!): User
 }

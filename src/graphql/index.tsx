@@ -112,6 +112,7 @@ export type Query = {
   feed: Feed;
   post: Post;
   user: User;
+  users: Array<User>;
 };
 
 

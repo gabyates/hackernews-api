@@ -56,6 +56,16 @@ export const Query: QueryResolvers = {
         return post;
     },
 
+    async users(_, __, ctx) {
+        const users = await ctx.prisma.user.findMany();
+
+        if (users === null) {
+            throw new Error('User was not found.');
+        }
+
+        return users;
+    },
+
     async user(_, args, ctx) {
         const user = await ctx.prisma.user.findUnique({
             where: { id: args.id },
@@ -89,6 +99,7 @@ export const Query: QueryResolvers = {
 interface QueryResolvers {
     feed: Resolver<gql.QueryFeedArgs>;
     post: Resolver<gql.QueryPostArgs>;
+    users: Resolver;
     user: Resolver<gql.QueryUserArgs>;
     authenticate: Resolver<gql.QueryAuthenticateArgs>;
 }
