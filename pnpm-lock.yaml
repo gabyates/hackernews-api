@@ -3,7 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@graphql-codegen/cli': 2.2.0
   '@graphql-codegen/typescript': 2.2.2
-  '@graphql-tools/graphql-file-loader': 7.3.0
+  '@graphql-tools/graphql-file-loader': 7.2.0
   '@graphql-tools/load': 7.3.2
   '@graphql-tools/schema': 8.2.0
   '@prisma/client': 3.2.1
@@ -32,7 +32,7 @@ specifiers:
   yup: 0.32.9
 
 dependencies:
-  '@graphql-tools/graphql-file-loader': 7.3.0_graphql@15.6.1
+  '@graphql-tools/graphql-file-loader': 7.2.0_graphql@15.6.1
   '@graphql-tools/load': 7.3.2_graphql@15.6.1
   '@graphql-tools/schema': 8.2.0_graphql@15.6.1
   '@prisma/client': 3.2.1_prisma@3.2.1
@@ -908,8 +908,8 @@ packages:
       unixify: 1.0.0
     dev: true
 
-  /@graphql-tools/graphql-file-loader/7.3.0_graphql@15.6.1:
-    resolution: {integrity: sha512-m5ox7GuVI1EibDygW+P4jpmA78viRcfOw0eiE/EiuCljQsIJcA4iXTsc22KbawS+EfPS0v6hXkk/JhnhXoeX4A==}
+  /@graphql-tools/graphql-file-loader/7.2.0_graphql@15.6.1:
+    resolution: {integrity: sha512-Vg3mBE5VpAy+a3/bHKQpj22LitBCrB2eCMc2D1RID0BBfk99aUQLE5eR4VclWvCnIJI2uhEr+dt32POdUu5hrw==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
