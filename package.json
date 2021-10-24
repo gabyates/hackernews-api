@@ -13,12 +13,12 @@
     },
     "dependencies": {
         "@graphql-tools/graphql-file-loader": "7.3.1",
-        "@graphql-tools/load": "7.3.2",
-        "@graphql-tools/schema": "8.2.0",
+        "@graphql-tools/load": "7.4.0",
+        "@graphql-tools/schema": "8.3.0",
         "@prisma/client": "3.3.0",
         "@types/bcryptjs": "2.4.2",
         "@types/jsonwebtoken": "8.5.5",
-        "@types/node": "16.11.1",
+        "@types/node": "16.11.4",
         "apollo-server-express": "3.4.0",
         "bcryptjs": "2.4.3",
         "chalk": "4.1.2",
@@ -27,7 +27,7 @@
         "faker": "5.5.3",
         "graphql": "15.6.1",
         "graphql-subscriptions": "1.2.1",
-        "graphql-ws": "5.5.1",
+        "graphql-ws": "5.5.3",
         "jsonwebtoken": "8.5.1",
         "prisma": "3.3.0",
         "ts-node-dev": "1.1.8",
@@ -39,10 +39,10 @@
         "@graphql-codegen/typescript": "2.2.4",
         "@types/faker": "5.5.9",
         "auto-changelog": "2.3.0",
-        "eslint": "8.0.1",
+        "eslint": "8.1.0",
         "eslint-config-dva": "0.0.13",
         "release-it": "14.11.6",
-        "ts-node": "10.3.0",
+        "ts-node": "10.4.0",
         "typescript": "4.4.4"
     }
 }
