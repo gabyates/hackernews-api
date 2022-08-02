@@ -39,7 +39,7 @@
         "@graphql-codegen/typescript": "2.4.1",
         "@types/faker": "5.5.9",
         "auto-changelog": "2.3.0",
-        "eslint": "8.3.0",
+        "eslint": "8.21.0",
         "eslint-config-dva": "0.0.16",
         "release-it": "14.11.8",
         "ts-node": "10.4.0",
