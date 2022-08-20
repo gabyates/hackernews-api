@@ -4,7 +4,7 @@
     "private": true,
     "license": "MIT",
     "scripts": {
-        "start": "node -r @swc-node/register src",
+        "start": "DEBUG=express-session node -r @swc-node/register src",
         "codegen:graphql": "graphql-codegen --config \"./graphql-codegen.yml\"",
         "release": "release-it --ci"
     },
@@ -17,16 +17,16 @@
         "@graphql-tools/schema": "8.5.1",
         "@prisma/client": "3.5.0",
         "@swc-node/register": "1.5.1",
-        "@swc/core": "1.2.233",
-        "@swc/helpers": "0.4.6",
+        "@swc/core": "1.2.241",
+        "@swc/helpers": "0.4.7",
         "@types/bcryptjs": "2.4.2",
         "@types/jsonwebtoken": "8.5.8",
-        "@types/node": "18.7.4",
-        "apollo-server-express": "3.5.0",
+        "@types/node": "18.7.8",
+        "apollo-server-express": "3.10.1",
         "bcryptjs": "2.4.3",
         "chalk": "4.1.2",
         "dotenv": "10.0.0",
-        "express": "4.17.1",
+        "express": "4.18.1",
         "faker": "5.5.3",
         "graphql": "16.5.0",
         "graphql-subscriptions": "1.2.1",
@@ -39,10 +39,12 @@
     "devDependencies": {
         "@graphql-codegen/cli": "2.11.6",
         "@graphql-codegen/typescript": "2.7.3",
+        "@types/express-session": "1.17.5",
         "@types/faker": "5.5.9",
         "auto-changelog": "2.4.0",
         "eslint": "8.22.0",
         "eslint-config-dva": "0.0.16",
+        "express-session": "1.17.3",
         "release-it": "15.3.0",
         "typescript": "4.7.4"
     }
