@@ -1,8 +1,8 @@
 /* Core */
 import type { GraphQLFieldResolver } from 'graphql';
-import type { PubSub } from 'graphql-subscriptions';
 import type { PrismaClient } from '@prisma/client';
 import type { Request, Response } from 'express';
+import type { Session as ExpressSession } from 'express-session';
 
 export type Resolver<
     TArgs = { [argName: string]: any },
@@ -13,7 +13,6 @@ export interface ResolverCtx {
     req: Request;
     currentUser: JWTPayload | null;
     prisma: PrismaClient;
-    pubsub: PubSub;
 }
 
 export interface ExpressCtx {
@@ -32,4 +31,9 @@ export interface JWTPayload {
     userId: string;
     email: string;
     password: string;
+}
+
+export interface Session extends ExpressSession {
+    views: number;
+    userId: string | null;
 }

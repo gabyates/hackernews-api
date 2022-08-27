@@ -5,12 +5,15 @@ type Query {
     post(id: ID!): Post!
     users: [User!]!
     user(id: ID!): User!
-    authenticate(token: String!): User
+    authenticate: User
+
+    ping: String!
 }
 
 type Mutation {
-    signup(email: String!, password: String!, name: String!): AuthPayload
-    login(email: String!, password: String!): AuthPayload
+    signup(email: String!, password: String!, name: String!): User
+    login(email: String!, password: String!): User
+    logout: Boolean
 
     updateUser(id: ID!, name: String, email: String, bio: String): User!
 
@@ -20,16 +23,6 @@ type Mutation {
 
     vote(postId: ID!): Vote!
     unVote(postId: ID!): Vote!
-}
-
-type Subscription {
-    postCreated: Post!
-    postVoted: Vote!
-}
-
-type AuthPayload {
-    token: String
-    user: User!
 }
 
 type User {

@@ -1,4 +1,4 @@
 export * from './jwt';
-export * from './contexts';
+export * from './createApolloCtx';
 export * from './getUrlParts';
 export * from './validators';

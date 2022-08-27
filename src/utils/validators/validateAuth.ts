@@ -28,16 +28,12 @@ export const createSchema = (mode: Mode) => {
     };
 
     if (mode === 'login') {
-        const login: yup.SchemaOf<gql.MutationLoginArgs> = yup
-            .object(loginShape)
-            .required();
+        const login: yup.SchemaOf<gql.MutationLoginArgs> = yup.object(loginShape).required();
 
         return login;
     }
 
-    const signup: yup.SchemaOf<gql.MutationLoginArgs> = yup
-        .object(signupShape)
-        .required();
+    const signup: yup.SchemaOf<gql.MutationLoginArgs> = yup.object(signupShape).required();
 
     return signup;
 };

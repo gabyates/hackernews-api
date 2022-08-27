@@ -12,10 +12,7 @@ dotenv.config({ path: join(__dirname, '../../.env.development.local') });
 /* eslint-disable-next-line prefer-destructuring */
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const decodeJWTPayload = (
-    authHeader: string,
-    operationName?: string,
-): JWTPayload | null => {
+export const decodeJWTPayload = (authHeader: string, operationName?: string): JWTPayload | null => {
     if (!JWT_SECRET) {
         throw new Error('JWT_SECRET env variable not found!');
     }
@@ -26,9 +23,7 @@ export const decodeJWTPayload = (
         const operation = operationName?.toLowerCase();
 
         if (operation !== 'login' && operation !== 'signup') {
-            console.log(
-                chalk.red('No token in authorization header found.', token),
-            );
+            console.log(chalk.red('No token in authorization header found.', token));
         }
 
         return null;
@@ -39,8 +34,11 @@ export const decodeJWTPayload = (
 
         return jwtPayload;
     } catch (error) {
-        // @ts-ignore
-        console.log(chalk.red('JWT verification error:'), error.message);
+        if (error instanceof jwt.JsonWebTokenError) {
+            console.log(chalk.red('JWT verification error:'), error.message);
+        } else {
+            console.log(chalk.red('Unknown JWT verification error.'));
+        }
     }
 
     return null;

@@ -2,9 +2,9 @@
 import bcrypt from 'bcryptjs';
 
 /* Instruments */
-import { Resolver, EVENT } from '../types';
-import type * as gql from '../graphql';
 import * as utils from '../utils';
+import type { Resolver, Session } from '../types';
+import type * as gql from '../graphql';
 
 export const Mutation: MutationResolvers = {
     async signup(_, args, ctx) {
@@ -24,18 +24,17 @@ export const Mutation: MutationResolvers = {
             data: { ...args, password },
         });
 
-        const jwtPayload = {
-            userId:   user.id,
-            email:    args.email,
-            password: args.password,
-        };
+        // const jwtPayload = {
+        //     userId:   user.id,
+        //     email:    args.email,
+        //     password: args.password,
+        // };
 
-        const token = utils.encodeJWTPayload(jwtPayload);
+        // const token = utils.encodeJWTPayload(jwtPayload);
 
-        return {
-            token,
-            user,
-        };
+        (ctx.req.session as Session).userId = user.id;
+
+        return user;
     },
 
     async login(_, args, ctx) {
@@ -49,24 +48,29 @@ export const Mutation: MutationResolvers = {
             throw new Error('Wrong email or password.');
         }
 
-        const isPasswordValid = await bcrypt.compare(
-            args.password,
-            user.password,
-        );
+        const isPasswordValid = await bcrypt.compare(args.password, user.password);
 
         if (!isPasswordValid) {
             throw new Error('Wrong email or password.');
         }
 
-        const jwtPayload = {
-            userId:   user.id,
-            email:    args.email,
-            password: args.password,
-        };
+        // const jwtPayload = {
+        //     userId:   user.id,
+        //     email:    args.email,
+        //     password: args.password,
+        // };
 
-        const token = utils.encodeJWTPayload(jwtPayload);
+        // const token = utils.encodeJWTPayload(jwtPayload);
 
-        return { token, user };
+        (ctx.req.session as Session).userId = user.id;
+
+        return user;
+    },
+
+    logout(_, __, ctx) {
+        (ctx.req.session as Session).userId = null;
+
+        return true;
     },
 
     async updateUser(_, args, ctx) {
@@ -104,8 +108,6 @@ export const Mutation: MutationResolvers = {
                 },
             },
         });
-
-        ctx.pubsub.publish(EVENT.POST_CREATED, newPost);
 
         return newPost;
     },
@@ -161,8 +163,6 @@ export const Mutation: MutationResolvers = {
             },
         });
 
-        ctx.pubsub.publish(EVENT.POST_VOTED, newVote);
-
         return newVote;
     },
 
@@ -186,9 +186,6 @@ export const Mutation: MutationResolvers = {
             where: { id: isAlreadyVoted.id },
         });
 
-        // !TODO
-        // ctx.pubsub.publish(EVENT.POST_VOTED, deletedVote);
-
         return deletedVote;
     },
 };
@@ -197,10 +194,13 @@ export const Mutation: MutationResolvers = {
 interface MutationResolvers {
     signup: Resolver<gql.MutationSignupArgs>;
     login: Resolver<gql.MutationLoginArgs>;
+    logout: Resolver;
+
     updateUser: Resolver<gql.MutationUpdateUserArgs>;
     createPost: Resolver<gql.MutationCreatePostArgs>;
     updatePost: Resolver<gql.MutationUpdatePostArgs>;
     deletePost: Resolver<gql.MutationDeletePostArgs>;
+
     vote: Resolver<gql.MutationVoteArgs>;
     unVote: Resolver<gql.MutationVoteArgs>;
 }

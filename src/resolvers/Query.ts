@@ -1,9 +1,22 @@
 /* Instruments */
-import type { Resolver } from '../types';
 import * as gql from '../graphql';
-import { decodeJWTPayload } from '../utils';
+import type { Resolver, Session } from '../types';
 
 export const Query: QueryResolvers = {
+    async authenticate(_, __, ctx) {
+        const userId = (ctx.req.session as Session).userId;
+
+        if (userId) {
+            const user = await ctx.prisma.user.findUnique({
+                where: { id: userId },
+            });
+
+            if (user) return user;
+        }
+
+        return null;
+    },
+
     async feed(_, args, ctx) {
         const { filter: contains, skip, take } = args;
 
@@ -13,20 +26,14 @@ export const Query: QueryResolvers = {
 
         const orderBy: unknown[] = [
             {
-                createdAt:
-                    args.orderBy?.createdAt === gql.Order_By_Enum.Asc
-                        ? 'asc'
-                        : 'desc',
+                createdAt: args.orderBy?.createdAt === gql.Order_By_Enum.Asc ? 'asc' : 'desc',
             },
         ];
 
         if (args.orderBy?.voteCount) {
             orderBy.unshift({
                 votes: {
-                    _count:
-                        args.orderBy?.voteCount === gql.Order_By_Enum.Asc
-                            ? 'asc'
-                            : 'desc',
+                    _count: args.orderBy?.voteCount === gql.Order_By_Enum.Asc ? 'asc' : 'desc',
                 },
             });
         }
@@ -78,28 +85,19 @@ export const Query: QueryResolvers = {
         return user;
     },
 
-    async authenticate(_, args, ctx) {
-        const jwtPayload = decodeJWTPayload(args.token);
-
-        if (jwtPayload) {
-            const user = await ctx.prisma.user.findUnique({
-                where: { id: jwtPayload.userId },
-            });
-
-            if (user) {
-                return user;
-            }
-        }
-
-        return null;
+    async ping() {
+        return 'pong';
     },
 };
 
 /* Types */
 interface QueryResolvers {
+    authenticate: Resolver;
+
     feed: Resolver<gql.QueryFeedArgs>;
     post: Resolver<gql.QueryPostArgs>;
     users: Resolver;
     user: Resolver<gql.QueryUserArgs>;
-    authenticate: Resolver<gql.QueryAuthenticateArgs>;
+
+    ping: Resolver;
 }

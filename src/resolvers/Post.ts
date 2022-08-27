@@ -6,9 +6,7 @@ import type { Resolver } from '../types';
 
 export const Post: PostResolvers = {
     async postedBy(post, _, ctx) {
-        const postedBy = await ctx.prisma.post
-            .findUnique({ where: { id: post.id } })
-            .postedBy();
+        const postedBy = await ctx.prisma.post.findUnique({ where: { id: post.id } }).postedBy();
 
         if (postedBy === null) {
             throw new Error(`User that posted post ${post.id} was not found.`);
@@ -18,9 +16,7 @@ export const Post: PostResolvers = {
     },
 
     async votes(post, _, ctx) {
-        const votes = await ctx.prisma.post
-            .findUnique({ where: { id: post.id } })
-            .votes();
+        const votes = await ctx.prisma.post.findUnique({ where: { id: post.id } }).votes();
 
         return votes;
     },
@@ -32,9 +28,7 @@ export const Post: PostResolvers = {
 
         const userId = ctx.currentUser.userId;
 
-        const votes = await ctx.prisma.post
-            .findUnique({ where: { id: post.id } })
-            .votes();
+        const votes = await ctx.prisma.post.findUnique({ where: { id: post.id } }).votes();
 
         const isVotedByMe = votes.some(vote => vote.userId === userId);
 

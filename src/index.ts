@@ -3,48 +3,133 @@ import { join } from 'path';
 import { createServer } from 'http';
 import dotenv from 'dotenv';
 import express from 'express';
+import session, { type Store } from 'express-session';
+import bodyParser from 'body-parser';
+import createSQLiteStore from 'connect-sqlite3';
 import { ApolloServer } from 'apollo-server-express';
-import ws from 'ws';
-import { useServer } from 'graphql-ws/lib/use/ws';
 import chalk from 'chalk';
 
+import createPino from 'pino-http';
+import createPinoPretty from 'pino-pretty';
+
 /* Instruments */
-import { createApolloCtx, createWsCtx, wsLogging, getUrlParts } from './utils';
+import { createApolloCtx, getUrlParts } from './utils';
 import { schema } from './graphql/schema';
+import { Session } from './types';
+
+const pinoPretty = createPinoPretty({ colorize: true, levelFirst: true });
+const pino = createPino(pinoPretty);
+
+const IS_PROD = process.env.NODE_ENV === 'production';
 
 dotenv.config({ path: join(__dirname, '../.env.development.local') });
 
+const db = process.env.DATABASE_URL?.replace('file:', '');
+
+const cors = {
+    origin: [
+        'http://localhost:3000',
+
+        'https://studio.apollographql.com',
+
+        'https://hackernews-api.up.railway.app/graphql',
+    ],
+    credentials: true,
+};
+
+const SQLiteStore = createSQLiteStore(session);
+const jsonParser = bodyParser.json();
+
 (async () => {
     const app = express();
+    app.use(pino);
+
+    // ? 1. Generate and save cookie only on:
+    // ?   - login
+    // ?   - signup
+    // ? 2. Prune cookie on logout
+    // ? 3. Choose authentication check strategy
+
+    app.use(
+        session({
+            // ? Type-asserted due to wrong connect-sqlite3 typing
+            store: new SQLiteStore({ table: 'sessions', dir: 'prisma', db }) as Store,
+
+            name:              'session-cookie',
+            secret:            'secret',
+            resave:            false,
+            saveUninitialized: false,
+
+            cookie: {
+                maxAge:   1000 * 60 * 60 * 24 * 30, // 30 days
+                httpOnly: true,
+                secure:   IS_PROD,
+                sameSite: IS_PROD ? 'none' : 'lax',
+            },
+        }),
+    );
+
     const httpServer = createServer(app);
 
-    const apolloServer = new ApolloServer({
-        schema,
-        context: createApolloCtx,
-    });
+    const apolloServer = new ApolloServer({ schema, context: createApolloCtx });
 
     await apolloServer.start();
 
-    apolloServer.applyMiddleware({ app });
+    app.post('/graphql', jsonParser, (req, res, next) => {
+        const operationName = req.body?.operationName?.toLowerCase();
+
+        console.log(chalk.red('session 0', operationName));
+
+        // req.log.info('/graphql');
+
+        // console.log(
+        //     chalk.cyan('req.body.variables'),
+        //     req.body.variables,
+        //     '\n',
+        //     chalk.cyan('req.headers.authorization'),
+        //     req.headers.authorization?.slice(0, 15),
+        //     '\n',
+        //     chalk.cyan('req.headers.cookie'),
+        //     req.headers.cookie,
+        //     '\n',
+        //     chalk.cyan('req.sessionID'),
+        //     req.sessionID,
+        //     '\n',
+        //     chalk.cyan('req.session'),
+        //     req.session,
+        //     '\n',
+        //     chalk.cyan('req.headers'),
+        //     req.headers,
+        //     '\n',
+        //     // chalk.cyan('req.body'),
+        //     // req.body,
+        // );
+
+        if ([ 'authenticate', 'login', 'signup' ].includes(operationName)) {
+            console.log(chalk.red('session +', operationName));
+
+            if (operationName === 'login') {
+                const body = req.body;
+                console.log(body);
+            }
+
+            if ((req.session as Session).views) {
+                (req.session as Session).views++;
+            } else {
+                (req.session as Session).views = 1;
+            }
+        } else {
+            console.log(chalk.red('session -', operationName));
+        }
+
+        next();
+    });
+
+    apolloServer.applyMiddleware({ app, cors });
 
     const { host, port, protocol } = getUrlParts();
 
     httpServer.listen({ port, host: '0.0.0.0' }, () => {
-        const wsServer = new ws.Server({
-            server: httpServer,
-            path: apolloServer.graphqlPath,
-            host: '0.0.0.0',
-        });
-
-        useServer(
-            {
-                schema,
-                context: createWsCtx,
-                ...wsLogging,
-            },
-            wsServer,
-        );
-
         console.log(
             chalk.cyanBright(
                 `🚀 HTTP server ready at ${chalk.blueBright(
@@ -52,12 +137,16 @@ dotenv.config({ path: join(__dirname, '../.env.development.local') });
                 )}`,
             ),
         );
-        console.log(
-            chalk.cyanBright(
-                `📲 Subscription server ready at ${chalk.blueBright(
-                    `${protocol.ws}://${host}:${port}${apolloServer.graphqlPath}`,
-                )}`,
-            ),
-        );
     });
 })();
+
+// TODO keep sessions in shared sqlite
+// TODO use dev and prod sqlite
+// TODO ensure proper env split: dev and prod
+// TODO upgrade prisma
+// TODO test out chalk 5 upgrade path https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+// TODO test and integrate pino logger
+// TODO refactor code structure
+// TODO refactor error handling
+// TODO move api to next.js api routes
+// TODO unify type models

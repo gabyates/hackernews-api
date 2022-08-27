@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -12,12 +13,6 @@ export type Scalars = {
   Date: any;
 };
 
-export type AuthPayload = {
-  __typename?: 'AuthPayload';
-  token?: Maybe<Scalars['String']>;
-  user: User;
-};
-
 export type Feed = {
   __typename?: 'Feed';
   count: Scalars['Int'];
@@ -28,8 +23,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
   deletePost: Scalars['Boolean'];
-  login?: Maybe<AuthPayload>;
-  signup?: Maybe<AuthPayload>;
+  login?: Maybe<User>;
+  logout?: Maybe<Scalars['Boolean']>;
+  signup?: Maybe<User>;
   unVote: Vote;
   updatePost: Post;
   updateUser: User;
@@ -74,10 +70,10 @@ export type MutationUpdatePostArgs = {
 
 
 export type MutationUpdateUserArgs = {
-  bio?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  bio?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -91,8 +87,8 @@ export enum Order_By_Enum {
 }
 
 export type OrderByInput = {
-  createdAt?: Maybe<Order_By_Enum>;
-  voteCount?: Maybe<Order_By_Enum>;
+  createdAt?: InputMaybe<Order_By_Enum>;
+  voteCount?: InputMaybe<Order_By_Enum>;
 };
 
 export type Post = {
@@ -110,22 +106,18 @@ export type Query = {
   __typename?: 'Query';
   authenticate?: Maybe<User>;
   feed: Feed;
+  ping: Scalars['String'];
   post: Post;
   user: User;
   users: Array<User>;
 };
 
 
-export type QueryAuthenticateArgs = {
-  token: Scalars['String'];
-};
-
-
 export type QueryFeedArgs = {
-  filter?: Maybe<Scalars['String']>;
-  orderBy?: Maybe<OrderByInput>;
-  skip?: Maybe<Scalars['Int']>;
-  take?: Maybe<Scalars['Int']>;
+  filter?: InputMaybe<Scalars['String']>;
+  orderBy?: InputMaybe<OrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -136,12 +128,6 @@ export type QueryPostArgs = {
 
 export type QueryUserArgs = {
   id: Scalars['ID'];
-};
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  postCreated: Post;
-  postVoted: Vote;
 };
 
 export type User = {
