@@ -141,6 +141,7 @@ const jsonParser = bodyParser.json();
 })();
 
 // TODO keep sessions in shared sqlite
+// TODO delete cookie after logout. or not?
 // TODO use dev and prod sqlite
 // TODO ensure proper env split: dev and prod
 // TODO upgrade prisma
