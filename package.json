@@ -12,17 +12,17 @@
         "seed": "ts-node-dev prisma/seed"
     },
     "dependencies": {
-        "@graphql-tools/graphql-file-loader": "7.5.2",
-        "@graphql-tools/load": "7.7.4",
-        "@graphql-tools/schema": "9.0.1",
+        "@graphql-tools/graphql-file-loader": "7.5.3",
+        "@graphql-tools/load": "7.7.5",
+        "@graphql-tools/schema": "9.0.2",
         "@prisma/client": "3.5.0",
         "@swc-node/register": "1.5.1",
-        "@swc/core": "1.2.242",
+        "@swc/core": "1.2.244",
         "@swc/helpers": "0.4.11",
         "@types/bcryptjs": "2.4.2",
         "@types/jsonwebtoken": "8.5.9",
         "@types/node": "18.7.13",
-        "apollo-server-express": "3.10.1",
+        "apollo-server-express": "3.10.2",
         "bcryptjs": "2.4.3",
         "body-parser": "1.20.0",
         "chalk": "4.1.2",
@@ -36,16 +36,16 @@
         "yup": "0.32.11"
     },
     "devDependencies": {
-        "@graphql-codegen/cli": "2.11.6",
+        "@graphql-codegen/cli": "2.11.8",
         "@graphql-codegen/typescript": "2.7.3",
         "@types/connect-sqlite3": "0.9.1",
         "@types/express-session": "1.17.5",
         "@types/faker": "5.5.9",
         "auto-changelog": "2.4.0",
-        "eslint": "8.22.0",
+        "eslint": "8.23.0",
         "eslint-config-dva": "0.0.16",
         "express-session": "1.17.3",
         "release-it": "15.4.0",
-        "typescript": "4.7.4"
+        "typescript": "4.8.2"
     }
 }
