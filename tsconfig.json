@@ -14,6 +14,7 @@
         "outDir": "dist",
         "strict": true,
         "lib": ["ESNext"],
+        "jsx": "react-jsx",
         "esModuleInterop": true,
         "downlevelIteration": true
     }
