@@ -32,7 +32,7 @@ const cors = {
 
         'https://studio.apollographql.com',
 
-        'https://z-hackernews-ui.vercel.app',
+        'https://hackernews-ui.vercel.app',
     ],
     credentials: true,
 };
