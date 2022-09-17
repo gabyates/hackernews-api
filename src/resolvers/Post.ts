@@ -6,11 +6,7 @@ import type { Resolver } from '../types';
 
 export const Post: PostResolvers = {
     async postedBy(post, _, ctx) {
-        console.log('xxx', post);
-        const post1 = await ctx.prisma.post.findUnique({ where: { id: post.id } });
-        console.log('yyy', post1);
         const postedBy = await ctx.prisma.post.findUnique({ where: { id: post.id } }).postedBy();
-        console.log('🚀 ~ postedBy ~ postedBy ', postedBy);
 
         if (postedBy === null) {
             throw new Error(`User, that posted a post ${post.id} was not found.`);
