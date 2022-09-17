@@ -13,9 +13,9 @@ import createPino from 'pino-http';
 import createPinoPretty from 'pino-pretty';
 
 /* Instruments */
-import { createApolloCtx, getUrlParts } from './utils';
-import { schema } from './graphql/schema';
-import { Session } from './types';
+import { createApolloCtx, getUrlParts } from '@/utils';
+import { schema } from '@/graphql/schema';
+import { Session } from '@/types';
 
 const pinoPretty = createPinoPretty({ colorize: true, levelFirst: true });
 const pino = createPino(pinoPretty);

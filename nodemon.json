@@ -1,0 +1,10 @@
+{
+    "$schema": "https://json.schemastore.org/nodemon.json",
+    "ignore": ["node_modules"],
+    "watch": ["package.json", "nodemon.json", "tsconfig.json", "./src/*"],
+    "delay": 2500,
+    "ext": ".ts",
+    "execMap": {
+        "ts": "node -r @swc-node/register"
+    }
+}

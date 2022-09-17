@@ -8,13 +8,13 @@
         "baseUrl": ".",
         "paths": { "@/*": ["src/*"] },
 
-        "moduleResolution": "Node",
+        "moduleResolution": "NodeNext",
+        "module": "ESNext",
         "sourceMap": true,
         "outDir": "dist",
         "strict": true,
         "lib": ["ESNext"],
         "esModuleInterop": true,
-        "jsx": "preserve",
         "downlevelIteration": true
     }
 }

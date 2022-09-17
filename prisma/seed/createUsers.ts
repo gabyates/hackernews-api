@@ -1,6 +1,6 @@
 /* Core */
 import bcrypt from 'bcryptjs';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 /* Instruments */
 import { prisma } from './client';
@@ -16,10 +16,9 @@ export const createUsers = async () => {
             posts: {
                 create: {
                     url:         'https://railway.app',
-                    description:
-                        'Railway.app is a cool fit for an API deployments.',
-                    createdAt: faker.date.recent(),
-                    votes:     {
+                    description: 'Railway.app is a cool fit for an API deployments.',
+                    createdAt:   faker.date.recent(),
+                    votes:       {
                         create: {
                             user: { connect: { email: 'test@email.io' } },
                         },
@@ -37,10 +36,9 @@ export const createUsers = async () => {
             posts: {
                 create: {
                     url:         'https://en.wikipedia.org/wiki/A_Walk_to_Remember',
-                    description:
-                        '«A Walk to Remember» — is a trash movie, do not watch it!',
-                    createdAt: faker.date.recent(),
-                    votes:     {
+                    description: '«A Walk to Remember» — is a trash movie, do not watch it!',
+                    createdAt:   faker.date.recent(),
+                    votes:       {
                         create: {
                             user: {
                                 connect: { email: 'lauren-german@email.io' },
@@ -60,10 +58,9 @@ export const createUsers = async () => {
             posts: {
                 create: {
                     url:         'https://en.wikipedia.org/wiki/Bitter_Moon',
-                    description:
-                        '«Bitter Moon» — a movie that I appear in, check me out!',
-                    createdAt: faker.date.recent(),
-                    votes:     {
+                    description: '«Bitter Moon» — a movie that I appear in, check me out!',
+                    createdAt:   faker.date.recent(),
+                    votes:       {
                         create: [{ userId: dima.id }, { userId: lauren.id }],
                     },
                 },
@@ -101,10 +98,9 @@ export const createUsers = async () => {
             posts: {
                 create: {
                     url:         'https://vercel.com',
-                    description:
-                        'Vercel features really cool deployment service, chick it out!',
-                    createdAt: faker.date.recent(),
-                    votes:     {
+                    description: 'Vercel features really cool deployment service, chick it out!',
+                    createdAt:   faker.date.recent(),
+                    votes:       {
                         create: [
                             { userId: dima.id },
                             { userId: jack.id },
