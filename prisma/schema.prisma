@@ -7,17 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  description String
-  url         String
-  postedById  String
-  postedBy    User     @relation(fields: [postedById], references: [id])
-  isVotedByMe Boolean  @default(false)
-  votes       Vote[]
-}
-
 model User {
   id       String  @id @default(uuid())
   email    String  @unique
@@ -26,6 +15,17 @@ model User {
   bio      String?
   posts    Post[]
   votes    Vote[]
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  description String
+  url         String
+  postedById  String
+  postedBy    User     @relation(fields: [postedById], references: [id])
+  isVotedByMe Boolean  @default(false)
+  votes       Vote[]
+  createdAt   DateTime @default(now())
 }
 
 model Vote {

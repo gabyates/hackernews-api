@@ -1,21 +1,35 @@
 {
-    "ts-node": {
-        "swc": true,
-        "transpileOnly": true,
-    },
-    "compilerOptions": {
-        /* Module resolution */
-        "baseUrl": ".",
-        "paths": { "@/*": ["src/*"] },
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "jsx": "react-jsx",
 
-        "moduleResolution": "NodeNext",
-        "module": "ESNext",
-        "sourceMap": true,
-        "outDir": "dist",
-        "strict": true,
-        "lib": ["ESNext"],
-        "jsx": "react-jsx",
-        "esModuleInterop": true,
-        "downlevelIteration": true
-    }
+    /* Modules */
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": { "@/*": ["src/*"] },
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+
+    /* Emit */
+    "noEmit": true,
+    "outDir": "dist",
+    "declaration": false,
+    "sourceMap": true,
+    "downlevelIteration": true,
+
+    /* Interop Constraints */
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+  }
 }
